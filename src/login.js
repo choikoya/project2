@@ -18,9 +18,9 @@ function LoginPage() {
     const token = sessionStorage.getItem('authToken');
     if (token) {
       setIsLoggedIn(true);
-      navigate('/upload');  // 이미 로그인된 사용자는 다른 페이지로 리다이렉트
+      // navigate('/upload');  // 이미 로그인된 사용자는 다른 페이지로 리다이렉트
     }
-  }, [navigate]);
+  }, []);
 
   const settings = {
     dots: true, // 하단에 슬라이드 이동 점 표시
@@ -58,29 +58,47 @@ function LoginPage() {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log("서버응답", data);
-        const token = data.token; // 백엔드에서 받은 토큰
-        const role = data.role;   // 백엔드에서 받은 역할 ("admin" 또는 "user")
+        // 'Authorization' 헤더에서 토큰을 추출합니다.
+        const token = response.headers.get('Authorization');
+        //const role = data.role;   // 백엔드에서 받은 역할 ("admin" 또는 "user")
+        if (token) {
+          // 'Bearer ' 접두사를 제거합니다.
+          const jwtToken = token.replace('Bearer ', '');
+          
+          // JWT 토큰을 sessionStorage에 저장
+        sessionStorage.setItem('authToken', jwtToken);
+        //sessionStorage.setItem('userRole', role);
 
-        // 토큰을 sessionStorage에 저장
-        sessionStorage.setItem('authToken', token);
-        sessionStorage.setItem('userRole', role);
+        console.log('Received token:', jwtToken);
 
-        if (role === 'admin') {
-          navigate('/upload');
+        // 로그인 성공 알림 표시
+        alert('로그인 성공!');
+
+        // 관리자와 일반 사용자 구분
+        if (username === 'admin') {
+          navigate('/upload');  // 관리자일 경우 /adminpage로 이동
         } else {
-          // 로그인 후 대시보드로 이동
-          navigate('/upload');
+          navigate('/');  // 일반 사용자일 경우 /upload로 이동
         }
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || '로그인 실패: 아이디나 비밀번호를 확인하세요.');
+    } else {
+      throw new Error('Authorization header not found.');
+    }
+  } else {
+    const errorData = await response.text();
+    setError(errorData || '로그인 실패: 아이디나 비밀번호를 확인하세요.');
+  }
 
+        // if (role === 'admin') {
+        //   navigate('/upload');
+        // } else {
+        //   // 로그인 후 대시보드로 이동
+        //   navigate('/upload');
+        // }
+      
         // // 응답 상태 코드와 오류 메시지 출력
         // console.error('로그인 실패, 상태 코드:', response.status);
         // alert('로그인 실패: 아이디나 비밀번호를 확인하세요.');
-      }
+      
     } catch (error) {
       console.error('로그인 오류:', error);
       setError('알 수 없는 오류가 발생했습니다.');

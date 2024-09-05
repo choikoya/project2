@@ -1,123 +1,84 @@
-import React, { useState, useEffect } from 'react';
-import './fileUpload.css';
+import React, { useState } from 'react';
+import axios from 'axios';
 
-function FileUpload() {
-  const [file, setFile] = useState(null); //파일객체
-  const [preview, setPreview] = useState(null); // 미리보기 URL
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false); // 분석 실패 시 사용할 상태
+const ImageUploadAndResult = () => {
+  const [selectedImage, setSelectedImage] = useState(null); // 사용자가 선택한 이미지
+  const [uploadedImageUrl, setUploadedImageUrl] = useState(''); // 서버에서 반환된 이미지 경로
+  const [analysisText, setAnalysisText] = useState(''); // 서버에서 반환된 분석 텍스트
+  const [analyzedImageUrl, setAnalyzedImageUrl] = useState(''); // 서버에서 반환된 분석된 이미지 URL
 
-
-  useEffect(() => {
-    // 파일이 변경될 때 미리보기 URL 생성
-    if (file) {
-      const previewURL = URL.createObjectURL(file);
-      setPreview(previewURL);
-
-      // 컴포넌트 언마운트 또는 파일 변경 시 URL 해제
-      return () => URL.revokeObjectURL(previewURL);
-    }
-  }, [file]);
-
-
-
-    // 파일 선택 시 처리
-  const handleFileUpload = (e) => {
-    setFile(e.target.files[0]); // 파일 업로드
-    setResult(null); // 파일 업로드 시 결과 초기화
-    setLoading(false); // 로딩 상태 초기화
-    
-
+  // 이미지 선택 핸들러
+  const handleImageChange = (e) => {
+    setSelectedImage(e.target.files[0]);
   };
 
-   // 백엔드에 파일 전송 및 분석 요청
-  const handleAnalyze = async() => {
-    if (!file) return;
-
-    setLoading(true); // 분석 시작 시 로딩 표시
-    setError(false); // 에러 상태 초기화
-
+  // 이미지 업로드 핸들러
+  const handleUpload = async () => {
     const formData = new FormData();
-    formData.append('file', file); // 파일 데이터를 FormData로 감싸서 전송
-
+    formData.append('image', selectedImage);
 
     try {
-        // 백엔드 API 호출
-        const response = await fetch('http://localhost:8080/analyze', { // 백엔드 URL
-          method: 'POST',
-          body: formData, // FormData 객체를 전송
-        });
+      // 이미지 파일을 백엔드에 업로드
+      const uploadResponse = await axios.post('http://192.168.0.142:8080/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-        const data = await response.json();
+      const analysisId = uploadResponse.data.analysisId; // 서버에서 분석 ID를 반환
+      console.log("Analysis ID:", analysisId);
 
-    
-        
-      setLoading(false); // 5초 후에 로딩 중 상태 해제
-      if (data.success) {
-        setResult(`분석완료: ${data.result}`); // 분석 결과가 있을 때
-      } else {
-        setResult(null);
-        setError(true); // 분석 결과가 없을 때
+      // 업로드 후 분석된 데이터를 받아오기
+      fetchAnalysisResult(analysisId);
+    } catch (error) {
+      console.error('Error uploading the image', error);
     }
-  } catch (error) {
-    console.error('분석 요청 중 오류 발생:', error);
-    setLoading(false);
-    setError(true); // 요청 실패 시 에러 처리
-  }
-};
+  };
+
+  // 분석 결과 요청 핸들러
+  const fetchAnalysisResult = async (analysisId) => {
+    try {
+      // 서버로부터 분석 결과 요청
+      const resultResponse = await axios.get(`http://192.168.0.142:8080/api/result/${analysisId}`);
+
+      // 서버에서 받은 분석된 이미지 URL과 분석 텍스트 저장
+      setAnalyzedImageUrl(resultResponse.data.analyzedImageUrl);
+      setAnalysisText(resultResponse.data.analysisText);
+    } catch (error) {
+      console.error('Error fetching analysis result', error);
+    }
+  };
 
   return (
-    <div className="file-upload-container">
-      <div className="left-section">
-        <div className="upload-section">
-          <div className="upload-header">
-            <i className="fas fa-upload"></i> {/* 업로드 아이콘 */}
-            <label className="upload-label">Upload your files</label>
-          </div>
-          <div className="upload-box">
-            <input type="file" id="file-upload" onChange={handleFileUpload} />
-            <label htmlFor="file-upload" className="custom-file-upload">
-              Click to select or drag & drop
-            </label>
-          </div>
+    <div>
+      <h1>Upload Image and View Analysis Result</h1>
+      <input type="file" onChange={handleImageChange} />
+      <button onClick={handleUpload}>Upload and Analyze</button>
+
+      {/* 업로드된 이미지 미리보기 */}
+      {uploadedImageUrl && (
+        <div>
+          <h3>Uploaded Image:</h3>
+          <img src={`http://192.168.0.142:8080${uploadedImageUrl}`} alt="Uploaded" style={{ width: '300px', height: 'auto' }} />
         </div>
-        
-        {file && (
-          <div className="image-preview">
-            <img src={file} alt="uploaded" className="uploaded-image" />
-          </div>
-        )}
+      )}
 
-        {file && (
-          <div className="button-container">
-            <button className="analyze-button" onClick={handleAnalyze}>
-              분석
-            </button>
-            <button className="next-button">
-              Next
-            </button>
-          </div>
-        )}
-      </div>
+      {/* 분석 결과 출력: 분석된 이미지 및 분석된 텍스트 */}
+      {analyzedImageUrl && (
+        <div>
+          <h3>Analyzed Image:</h3>
+          <img src={`http://192.168.0.142:8080${analyzedImageUrl}`} alt="Analyzed Result" style={{ width: '300px', height: 'auto' }} />
+        </div>
+      )}
 
-      <div className="divider"></div>
-
-      <div className="right-section">
-        {loading && <div className="loading-message">로딩 중...</div>}
-        {!loading && result && (
-          <div className="result-section">
-            <button className="recognized-button blinking">
-              분석완료
-            </button>
-            <div className="number-plate">
-              <h3>{result}</h3>
-            </div>
-          </div>
-        )}
-      </div>
+      {analysisText && (
+        <div>
+          <h3>Analysis Result Text:</h3>
+          <p>{analysisText}</p>
+        </div>
+      )}
     </div>
   );
-}
+};
 
-export default FileUpload;
+export default ImageUploadAndResult;
