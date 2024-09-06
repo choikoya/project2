@@ -9,7 +9,6 @@ function MultipleFileUpload() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [message, setMessage] = useState('');
   const [inputFullNumber, setInputFullNumber] = useState('');
-  
   const token = sessionStorage.getItem("authToken");
 
   // 파일 선택 시 호출되는 함수
@@ -47,7 +46,7 @@ function MultipleFileUpload() {
   
 
     try {
-      const response = await fetch('http://192.168.0.133:8080/images/imagesFolder', {
+      const response = await fetch('http://192.168.0.142:8080/images/imagesFolder', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -73,7 +72,7 @@ function MultipleFileUpload() {
       setIsProcessing(true);
 
       try {
-        const response = await fetch('http://192.168.0.133:8080/images/processImages', {
+        const response = await fetch('http://192.168.0.142:8080/images/processImages', {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -83,33 +82,28 @@ function MultipleFileUpload() {
         if (response.ok) {
           const data = await response.json();
           setResult(data);
-          setButtonText('next');
+          if (data.name2) {
+            setMessage('Analysis Successful');
+            setButtonText('Next');
+          } else {
+            setMessage('Analysis Failed: No image found');
+            setButtonText('Start');
+          }
         } else {
-            setMessage('Analysis Failed: Server error');
-            setButtonText('error');
+          setMessage('Analysis Failed: Server error');
+          setButtonText('Start');
         }
       } catch (error) {
         console.error('Error:', error);
         setMessage('Analysis Failed: An error occurred');
-        setButtonText('error');
+        setButtonText('Start');
       } finally {
         setIsProcessing(false);
       }
-   
+    } else {
+      console.log('Proceeding to next step...');
     }
   };
-
-  useEffect(() => {
-    if (result) {
-        if (result.name2 === "미정") {
-            setMessage('Analysis Failed: No image found');
-            setButtonText('Next');
-        } else {
-            setMessage('Analysis Successful');
-            setButtonText('Next');
-        }
-    }
-}, [result]);
 
   const getBorderColor = () => {
     if (result) {
@@ -137,7 +131,7 @@ function MultipleFileUpload() {
     event.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
 
     try {
-      const response = await fetch('http://192.168.0.133:8080/images/update', {
+      const response = await fetch('http://192.168.0.142:8080/images/update', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -224,7 +218,7 @@ function MultipleFileUpload() {
             <h2>Analysis result:</h2>
             <p>{message}</p>
             <img
-              src={`http://192.168.0.133:8080/image/${result.name2}`}
+              src={`http://192.168.0.142:8080/image/${result.name2}`}
               alt="Processed Content"
               style={{ maxWidth: '100%', height: 'auto' }}
               onError={(e) => {

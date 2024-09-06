@@ -44,7 +44,7 @@ function FileUpload() {
     setShowLoading(true); // 로딩 중 표시 시작
 
     const formData = new FormData();
-    formData.append('file', file); // 파일 데이터를 FormData로 감싸서 전송
+    formData.append('files', file); // 파일 데이터를 FormData로 감싸서 전송
 
 
     try {
@@ -119,7 +119,7 @@ function FileUpload() {
 
       <div className="right-section">
       {/* 로딩 중 표시 (7초 동안) */}
-      {showLoading && <div className="loading-message">로딩 중...</div>}
+      {showLoading && <div className="loading-message">분석 중...</div>}
 
         {/* 분석 실패 시 "인식불가" 버튼 */}
         {!loading &&  !showLoading && (

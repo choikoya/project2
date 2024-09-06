@@ -7,11 +7,9 @@ function Header() {
     <header className="header">
       <nav>
         <ul className="nav-list">
-          <li>모니터링</li>
+          <li><Link to="/dashboard">모니터링</Link></li>
           <li>차량 조회</li>
-          <li>
-            <Link to="/upload">번호판 분석</Link> {/* 번호판 분석 클릭 시 /upload로 이동 */}
-          </li>
+          <li><Link to="/upload">번호판 분석</Link> {/* 번호판 분석 클릭 시 /upload로 이동 */}</li>
           <li>공지사항</li>
         </ul>
       </nav>
