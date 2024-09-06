@@ -49,7 +49,7 @@ function LoginPage() {
 
     try {
       // 백엔드 API로 로그인 요청 보내기
-      const response = await fetch('http://192.168.0.133:8080/login', {
+      const response = await fetch('http://localhost:8080/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
