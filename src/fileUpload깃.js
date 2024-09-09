@@ -1,4 +1,5 @@
 
+
 import axios from 'axios';
 import React, { useState ,useEffect } from 'react';
 
@@ -60,17 +61,15 @@ const handleUpload = async () => {
             setIsProcessing(true);
 
             try {
-                const response = await fetch('http://192.168.0.133:8080/images/processImages', {
+                const response = await fetch('http://192.168.0.133:8080/images/processImagesTest', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },
                 });
 
-                console.log(response);
                 if (response.ok) {
                     const data = await response.json();
-                    
                     setResult(data);
                     setButtonText('next');
                 } else {

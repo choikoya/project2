@@ -16,3 +16,7 @@
   display: flex;
   gap: 20px;
 }
+
+.logout-button {
+  cursor: pointer; /* 로그아웃에 손 모양 커서 */
+}

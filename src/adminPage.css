@@ -1,0 +1,107 @@
+.admin-page {
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  h2 {
+    margin-bottom: 10px;
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+  }
+  
+  th, td {
+    padding: 0px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  thead tr {
+    background-color: #F5F5F5;
+  }
+  
+  .new-badge {
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+  
+  .approve-btn {
+    
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .approve-btn.pending {
+    background-color: #FF9500;
+    color: white;
+  }
+  
+  .approve-btn.approved {
+    background-color: #548406;
+    color: white;
+  }
+  
+  /* 비활성화된 버튼에 스타일을 지정하되, 녹색 배경을 유지 */
+  .approve-btn:disabled {
+    background-color: #548406; /* 승인완료 상태에서도 녹색 유지 */
+    
+    cursor: not-allowed;
+  }
+  
+  /* 필터링 버튼 스타일 */
+  .filter-buttons {
+    margin-top: 50px;
+   
+  }
+  
+  .filter-btn{
+    padding: 10px 20px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    /* background-color: #f0f0f0; */
+    font-weight: bold;
+  }
+
+
+.all-btn {
+    background-color: #f0f0f0; 
+    color: black;
+  }
+  
+  .pending-btn {
+    background-color: #FF9500; /* 주황색 */
+    color: white;
+  }
+  
+  .approved-btn {
+    background-color: #548406; 
+    color: white;
+  }
+  
+/* hover 상태에서 색을 더 진하게 */
+.all-btn:hover {
+    background-color: #d6d6d6; 
+  }
+  
+  .pending-btn:hover {
+    background-color: #dd8101; 
+  }
+  
+  .approved-btn:hover {
+    background-color: #456d06; 
+  }

@@ -17,16 +17,10 @@ function LoginPage() {
    useEffect(() => {
     const token = sessionStorage.getItem('authToken');
     if (token) {
-      // 로그인 상태일 때 페이지 이동
       setIsLoggedIn(true);
-      const role = sessionStorage.getItem('userRole');
-      if (role === 'ROLE_ADMIN') {
-        navigate('/upload');
-      } else {
-        navigate('/dashboard');
-      }
+      // navigate('/upload');  // 이미 로그인된 사용자는 다른 페이지로 리다이렉트
     }
-  }, [navigate]);
+  }, []);
 
   const settings = {
     dots: true, // 하단에 슬라이드 이동 점 표시
@@ -55,7 +49,7 @@ function LoginPage() {
 
     try {
       // 백엔드 API로 로그인 요청 보내기
-      const response = await fetch('http://192.168.0.142:8080/login', {
+      const response = await fetch('http://192.168.0.133:8080/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,32 +58,47 @@ function LoginPage() {
       });
 
       if (response.ok) {
-        const data = await response.json(); // JSON 응답을 처리합니다.
-        const token = data.token;
-        const role = data.role; // 서버에서 역할을 응답으로 받는다고 가정합니다.
-
+        // 'Authorization' 헤더에서 토큰을 추출합니다.
+        const token = response.headers.get('Authorization');
+        //const role = data.role;   // 백엔드에서 받은 역할 ("admin" 또는 "user")
+        
         if (token) {
-          sessionStorage.setItem('authToken', token);
-          sessionStorage.setItem('userRole', role); // 역할 저장
-          console.log('Received role:', role);
-          console.log('Received token:', token);
+          // 'Bearer ' 접두사를 제거합니다.
+          const jwtToken = token.replace('Bearer ', '');
+          
+          // JWT 토큰을 sessionStorage에 저장
+        sessionStorage.setItem('authToken', jwtToken);
+        //sessionStorage.setItem('userRole', role);
+
+        console.log('Received token:', jwtToken);
 
         // 로그인 성공 알림 표시
         alert('로그인 성공!');
 
-        // 사용자 역할에 따라 페이지 이동
-        if (role === 'ROLE_ADMIN') {
-          navigate('/upload'); // 관리자 페이지
+        // 관리자와 일반 사용자 구분
+        if (username === 'admin') {
+          navigate('/upload');  // 관리자일 경우 /adminpage로 이동
         } else {
-          navigate('/home'); // 일반 사용자 페이지
+          navigate('/');  // 일반 사용자일 경우 /upload로 이동
         }
-      } else {
-        throw new Error('Token not found in response.');
-      }
     } else {
-     
-      alert('로그인 실패: 관리자의 승인 대기중입니다.');
+      throw new Error('Authorization header not found.');
     }
+  } else {
+    const errorData = await response.text();
+    setError(errorData || '로그인 실패: 아이디나 비밀번호를 확인하세요.');
+  }
+
+        // if (role === 'admin') {
+        //   navigate('/upload');
+        // } else {
+        //   // 로그인 후 대시보드로 이동
+        //   navigate('/upload');
+        // }
+      
+        // // 응답 상태 코드와 오류 메시지 출력
+        // console.error('로그인 실패, 상태 코드:', response.status);
+        // alert('로그인 실패: 아이디나 비밀번호를 확인하세요.');
       
     } catch (error) {
       console.error('로그인 오류:', error);

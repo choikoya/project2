@@ -9,7 +9,7 @@ function MultipleFileUpload() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [message, setMessage] = useState('');
   const [inputFullNumber, setInputFullNumber] = useState('');
-  
+
   const token = sessionStorage.getItem("authToken");
 
   // 파일 선택 시 호출되는 함수
@@ -21,33 +21,14 @@ function MultipleFileUpload() {
     const previewURLs = files.map((file) => URL.createObjectURL(file));
     setPreviews(previewURLs);
 
-      // 파일 선택 후 자동으로 업로드 실행
-  const formData = new FormData();
-  for (const file of files) {
-    formData.append('files', file);
-  }
-
-
-
-  // 파일 업로드 처리 함수(submit을 눌러야 업로드)
-  // const handleUpload = async () => {
-  //   if (selectedFiles.length === 0) {
-  //     alert('No files selected.');
-  //     return;
-  //   }
-
-  //   const formData = new FormData();
-
-  //   // 선택된 파일들을 FormData에 추가
-  //   for (const file of selectedFiles) {
-  //     formData.append('files', file);
-  //   }
-
-
-  
+    // 파일 선택 후 자동으로 업로드 실행
+    const formData = new FormData();
+    for (const file of files) {
+      formData.append('files', file);
+    }
 
     try {
-      const response = await fetch('http://localhost:8080/images/imagesFolder', {
+      const response = await fetch('http://192.168.0.133:8080/images/imagesFolder', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -69,7 +50,7 @@ function MultipleFileUpload() {
   // 이미지 처리 시작 함수
   const handleAnalysis = async () => {
     if (!isProcessing) {
-      setButtonText('분석중...');
+      setButtonText('Analyzing...');
       setIsProcessing(true);
 
       try {
@@ -83,15 +64,15 @@ function MultipleFileUpload() {
         if (response.ok) {
           const data = await response.json();
           setResult(data);
-          setButtonText('next');
+          setButtonText('Next');
         } else {
             setMessage('Analysis Failed: Server error');
-            setButtonText('error');
+            setButtonText('Error');
         }
       } catch (error) {
         console.error('Error:', error);
         setMessage('Analysis Failed: An error occurred');
-        setButtonText('error');
+        setButtonText('Error');
       } finally {
         setIsProcessing(false);
       }
@@ -101,15 +82,15 @@ function MultipleFileUpload() {
 
   useEffect(() => {
     if (result) {
-        if (result.name2 === "미정") {
-            setMessage('Analysis Failed: No image found');
-            setButtonText('Next');
-        } else {
-            setMessage('Analysis Successful');
-            setButtonText('Next');
-        }
+      if (result.name2 === "미정") {
+        setMessage('Analysis Failed: No image found');
+        setButtonText('Next');
+      } else {
+        setMessage('Analysis Successful');
+        setButtonText('Next');
+      }
     }
-}, [result]);
+  }, [result]);
 
   const getBorderColor = () => {
     if (result) {
@@ -197,9 +178,6 @@ function MultipleFileUpload() {
 
         {selectedFiles.length > 0 && (
           <div className="button-container">
-            {/* <button className="upload-button" onClick={handleUpload}>
-              Submit
-            </button> */}
             <button
               className="analyze-button"
               onClick={handleAnalysis}

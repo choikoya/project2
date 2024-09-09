@@ -16,28 +16,28 @@ function Dashboard() {
       entryTime: '2024년 9월 3일 오후 1:07',
       exitTime: '2024년 9월 3일 오후 2:07',
       phoneNumber: '010-000-0000',
-      recognition: 'O',
+      
     },
     {
       carNumber: '나 5678',
       entryTime: '2024년 9월 3일 오후 1:10',
       exitTime: '2024년 9월 3일 오후 2:10',
       phoneNumber: '010-123-4567',
-      recognition: 'X',
+      
     },
     {
       carNumber: '다 9012',
       entryTime: '2024년 9월 3일 오후 1:15',
       exitTime: '2024년 9월 3일 오후 2:15',
       phoneNumber: '010-987-6543',
-      recognition: 'O',
+      
     },
     {
       carNumber: '라 3456',
       entryTime: '2024년 9월 3일 오후 1:20',
       exitTime: '2024년 9월 3일 오후 2:20',
       phoneNumber: '010-555-5555',
-      recognition: 'O',
+      
     },
   ]);
 
@@ -143,7 +143,7 @@ function Dashboard() {
               <th>입차시간</th>
               <th>출차시간</th>
               <th>핸드폰 번호</th>
-              <th>번호판 인식</th>
+              
             </tr>
           </thead>
           <tbody>
@@ -153,7 +153,7 @@ function Dashboard() {
                 <td>{entry.entryTime}</td>
                 <td>{entry.exitTime}</td>
                 <td>{entry.phoneNumber}</td>
-                <td>{entry.recognition}</td>
+                
               </tr>
             ))}
           </tbody>

@@ -6,6 +6,10 @@ import Footer from './components/footer'; // 푸터 컴포넌트
 import LoginPage from './login';
 import Dashboard from './dashboard';
 import FileUpload from './fileUpload'; // 파일 업로드 페이지 컴포넌트
+import AdminPage from './adminPage';
+import Notice from './notice';
+import NoticeDetail from './noticeDetail';
+import NoticeWrite from './noticeWrite';
 
 function Layout({ children }) {
   const location = useLocation();
@@ -30,8 +34,13 @@ function App() {
       <Layout>
         <Routes>
           <Route path='/' element={<LoginPage />} />
-          /<Route path='/dashboard' element={<Dashboard/>}/>
+          <Route path='/dashboard' element={<Dashboard/>}/>
           <Route path="/upload" element={<FileUpload />} />
+          <Route path="/adminPage" element={<AdminPage />} />
+          <Route path="/notice" element={<Notice />} /> {/* 공지사항 리스트 페이지 */}
+          <Route path="/notice/:id" element={<NoticeDetail />} /> {/* 공지사항 상세 페이지 */}
+          <Route path="/write" element={<NoticeWrite />} /> {/* 공지사항  페이지 */}
+
         </Routes>
       </Layout>
     </BrowserRouter>
