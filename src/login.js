@@ -11,6 +11,7 @@ function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isSignupModalOpen, setIsSignupModalOpen] = useState(false); // 회원가입 모달 상태 관리
   const navigate = useNavigate();
 
    // 페이지 로드 시 로그인 상태 확인
@@ -21,9 +22,9 @@ function LoginPage() {
       setIsLoggedIn(true);
       const role = sessionStorage.getItem('userRole');
       if (role === 'ROLE_ADMIN') {
-        navigate('/upload');
+        navigate('/notice');
       } else {
-        navigate('/dashboard');
+        navigate('/notice');
       }
     }
   }, [navigate]);
@@ -69,8 +70,8 @@ function LoginPage() {
         const role = data.role; // 서버에서 역할을 응답으로 받는다고 가정합니다.
 
         if (token) {
-          sessionStorage.setItem('authToken', token);
-          sessionStorage.setItem('userRole', role); // 역할 저장
+          localStorage.setItem('authToken', token);
+          localStorage.setItem('userRole', role); // 역할 저장
           console.log('Received role:', role);
           console.log('Received token:', token);
 
@@ -79,9 +80,9 @@ function LoginPage() {
 
         // 사용자 역할에 따라 페이지 이동
         if (role === 'ROLE_ADMIN') {
-          navigate('/upload'); // 관리자 페이지
+          navigate('/notice'); // 관리자 페이지
         } else {
-          navigate('/home'); // 일반 사용자 페이지
+          navigate('/notice'); // 일반 사용자 페이지
         }
       } else {
         throw new Error('Token not found in response.');
@@ -96,6 +97,30 @@ function LoginPage() {
       setError('알 수 없는 오류가 발생했습니다.');
     }
   };
+
+  const handleSignup = async () => {
+    // 회원가입을 위한 API 호출
+    try {
+      const response = await fetch('http://192.168.0.142:8080/login/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }), // 필요에 따라 회원가입에 맞는 데이터 구조로 변경
+      });
+
+      if (response.ok) {
+        alert('회원가입 성공!관리자의 승인 대기중입니다.');
+        navigate('/'); // 회원가입 후 로그인 페이지로 이동
+      } else {
+        alert( '회원가입 실패: 정보를 확인하세요.');
+      }
+    } catch (error) {
+      console.error('회원가입 오류:', error);
+      alert('알 수 없는 오류가 발생했습니다.');
+    }
+  };
+
 
 
   return (
@@ -118,13 +143,13 @@ function LoginPage() {
         <h1>작업차량 통합관리 시스템</h1>
         <form className="login-form" onSubmit={handleSubmit}>
           <input type="text"
-            placeholder="차량번호"
+            placeholder="차량 번호(예시 : 부산00가0000)"
             className="input-field"
             value={username}
             onChange={(e) => setUsername(e.target.value)}  // 입력 값 변경 처리
           />
           <input type="password"
-            placeholder="핸드폰번호"
+            placeholder="핸드폰 번호(예시 : 01012345678)"
             className="input-field"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -134,10 +159,12 @@ function LoginPage() {
         </form>
 
         <div className="account-options">
-          <button className="signup-button" onClick={() => navigate('/signup')}>회원가입</button>
+          <button className="signup-button" onClick={handleSignup}>회원가입</button>
           <button className="delete-account-button" onClick={() => navigate('/delete-account')}>회원탈퇴</button>
         </div>
       </div>
+
+      
     </div>
   );
 }

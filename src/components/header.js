@@ -10,7 +10,7 @@ function Header() {
   
   // 페이지 로드 시 로그인 상태 확인
   useEffect(() => {
-    const token = sessionStorage.getItem('authToken'); // 세션 스토리지에서 토큰 확인
+    const token = localStorage.getItem('authToken'); // 세션 스토리지에서 토큰 확인
     if (token) {
       setIsLoggedIn(true); // 토큰이 있으면 로그인 상태로 설정
     }
@@ -18,7 +18,7 @@ function Header() {
 
   // 로그아웃 처리 함수
   const handleLogout = () => {
-    sessionStorage.removeItem('authToken'); // 토큰 삭제
+    localStorage.removeItem('authToken'); // 토큰 삭제
     setIsLoggedIn(false); // 로그아웃 상태로 전환
     navigate('/'); // 로그아웃 후 홈으로 이동
   };
@@ -31,10 +31,11 @@ function Header() {
     <header className="header">
       <nav>
         <ul className="nav-list">
+        <li><Link to="/notice">공지사항</Link></li>
           <li><Link to="/dashboard">모니터링</Link></li>
           <li>차량 조회</li>
           <li><Link to="/upload">번호판 분석</Link> {/* 번호판 분석 클릭 시 /upload로 이동 */}</li>
-          <li><Link to="/notice">공지사항</Link></li>
+          
         </ul>
       </nav>
       <div className="admin-section">
