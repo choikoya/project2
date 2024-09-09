@@ -23,7 +23,7 @@ function Notice() {
    useEffect(() => {
      const userRole = sessionStorage.getItem('role'); // 세션에서 사용자 역할 확인
      console.log('sessionStrorage', userRole);
-     if (userRole === 'ROLE_ADMIN') {
+     if (userRole === 'admin') {
        setIsAdmin(true); // 사용자가 관리자일 경우
      }
    }, []);
@@ -50,9 +50,9 @@ function Notice() {
       <h2>공지사항을 조회합니다</h2>
       
       {/* 관리자인 경우에만 등록 버튼을 보여줌 */}
-      {/* {isAdmin && ( */}
+      {isAdmin && (
         <button className="register-button" onClick={() => navigate('/write')}>등록</button>
-      {/* )} */}
+      )}
 
 
       {/* 공지사항 테이블 */}
