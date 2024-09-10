@@ -1,235 +1,67 @@
 import React, { useState, useEffect } from 'react';
-import './fileUpload.css';
+import axios from 'axios';
 
-function MultipleFileUpload() {
-  const [selectedFiles, setSelectedFiles] = useState([]);
-  const [previews, setPreviews] = useState([]); // 미리보기 URL
-  const [buttonText, setButtonText] = useState('Analysis Start');
-  const [result, setResult] = useState(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [message, setMessage] = useState('');
-  const [inputFullNumber, setInputFullNumber] = useState('');
+function AnalysisResult() {
+  const [leftImage, setLeftImage] = useState(null);
+  const [rightImage, setRightImage] = useState(null);
+  const [fileName, setFileName] = useState('');
+  const [resultImage, setResultImage] = useState(null);
+  const [resultText, setResultText] = useState('');
+  const [isAnalyzed, setIsAnalyzed] = useState(false);
 
-  const token = sessionStorage.getItem("authToken");
+  const baseUrl = process.env.REACT_APP_API_URL || 'http://192.168.0.142:8080';
+  const token = localStorage.getItem("authToken");
 
-  // 파일 선택 시 호출되는 함수
-  const handleFileChange = async(e) => {
-    const files = Array.from(e.target.files); // 파일들을 배열로 변환
-    setSelectedFiles(files); // 선택된 파일들을 상태에 저장
-
-    // 미리보기 URL 생성
-    const previewURLs = files.map((file) => URL.createObjectURL(file));
-    setPreviews(previewURLs);
-
-    // 파일 선택 후 자동으로 업로드 실행
-    const formData = new FormData();
-    for (const file of files) {
-      formData.append('files', file);
-    }
-
-    try {
-      const response = await fetch('http://192.168.0.133:8080/images/imagesFolder', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (response.ok) {
-        alert('사진 업로드 성공');
-      } else {
-        alert('사진 업로드 실패');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('업로드 중 오류 발생');
-    }
-  };
-
-  // 이미지 처리 시작 함수
-  const handleAnalysis = async () => {
-    if (!isProcessing) {
-      setButtonText('Analyzing...');
-      setIsProcessing(true);
-
+  useEffect(() => {
+    // 백엔드에서 이미지 및 분석 데이터를 가져오는 함수
+    const fetchData = async () => {
       try {
-        const response = await fetch('http://192.168.0.133:8080/images/processImages', {
-          method: 'GET',
+        const response = await axios.get(`${baseUrl}/images/getImageData`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            'Authorization': `Bearer ${token}`,
           },
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          setResult(data);
-          setButtonText('Next');
-        } else {
-            setMessage('Analysis Failed: Server error');
-            setButtonText('Error');
+        if (response.status === 200) {
+          // 이미지 및 데이터 세팅
+          setLeftImage(`${baseUrl}/image/${response.data.leftImage}`);
+          setRightImage(`${baseUrl}/image/${response.data.rightImage}`);
+          setFileName(response.data.fileName);
+          setResultImage(`${baseUrl}/image/${response.data.resultImage}`);
+          setResultText(response.data.resultText);
+          setIsAnalyzed(true);
         }
       } catch (error) {
-        console.error('Error:', error);
-        setMessage('Analysis Failed: An error occurred');
-        setButtonText('Error');
-      } finally {
-        setIsProcessing(false);
+        console.error('Error fetching image data', error);
       }
-   
-    }
-  };
+    };
 
-  useEffect(() => {
-    if (result) {
-      if (result.name2 === "미정") {
-        setMessage('Analysis Failed: No image found');
-        setButtonText('Next');
-      } else {
-        setMessage('Analysis Successful');
-        setButtonText('Next');
-      }
-    }
-  }, [result]);
-
-  const getBorderColor = () => {
-    if (result) {
-      switch (result.recognize) {
-        case '인식성공100':
-          return 'green';
-        case '인식성공50':
-          return 'yellow';
-        default:
-          return 'gray';
-      }
-    }
-    return 'gray';
-  };
-
-  const divStyle = {
-    border: `3px solid ${getBorderColor()}`, // 테두리 두께 및 색상
-    borderRadius: '10px', // 모서리 둥글게
-    padding: '20px', // 내부 여백
-    margin: '20px', // 외부 여백
-  };
-
-  // 번호판 사용자 업로드 함수
-  const updateRecognize = async (event) => {
-    event.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
-
-    try {
-      const response = await fetch('http://192.168.0.133:8080/images/update', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: result.name,
-          fullnumber: inputFullNumber,
-        }),
-      });
-
-      if (response.ok) {
-        console.log('Update successful');
-        alert('번호판 수정 성공!');
-      } else {
-        console.error('Update failed');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
+    fetchData();
+  }, [baseUrl, token]);
 
   return (
-    <div className="file-upload-container">
-      <div className="left-section">
-        <div className="upload-section">
-          <div className="upload-header">
-            <label className="upload-label">Upload your files</label>
-          </div>
-          <div className="upload-box">
-            <input
-              type="file"
-              id="file-upload"
-              onChange={handleFileChange}
-              multiple
-            />
-            <label htmlFor="file-upload" className="custom-file-upload">
-              Drag and drop files here
-            </label>
-          </div>
+    <div className="container">
+      <h2>분석 이미지 조회</h2>
+      <div className="image-container">
+        <div className="image-box">
+          {leftImage && <img src={leftImage} alt="Left Image" />}
+          <p>계근대 번호판</p>
         </div>
-
-        <div className="preview-section">
-          {previews.length > 0 && (
-            <div className="preview-box">
-              {previews.map((preview, index) => (
-                <img
-                  key={index}
-                  src={preview}
-                  alt={`uploaded-preview-${index}`}
-                  className="uploaded-image"
-                />
-              ))}
-            </div>
-          )}
+        <div className="image-box">
+          {rightImage && <img src={rightImage} alt="Right Image" />}
+          <p>{fileName}</p>
         </div>
-
-        {selectedFiles.length > 0 && (
-          <div className="button-container">
-            <button
-              className="analyze-button"
-              onClick={handleAnalysis}
-              disabled={isProcessing}
-            >
-              {buttonText}
-            </button>
-          </div>
-        )}
       </div>
 
-      <div className="right-section">
-        {result && result.name2 === '미정' && (
-          <div style={divStyle}>
-            <h2>Analysis result:</h2>
-            <p>{message}</p>
-          </div>
-        )}
-
-        {result && result.name2 && (
-          <div style={divStyle}>
-            <h2>Analysis result:</h2>
-            <p>{message}</p>
-            <img
-              src={`http://192.168.0.133:8080/image/${result.name2}`}
-              alt="Processed Content"
-              style={{ maxWidth: '100%', height: 'auto' }}
-              onError={(e) => {
-                e.target.src = 'path/to/placeholder-image.jpg'; // 이미지 로드 실패 시 대체 이미지
-              }}
-            />
-            <p>{result.fullnumber}</p>
-          </div>
-        )}
-
-        {result && result.recognize === '인식성공50' && (
-          <div>
-            <form className="inputfullnumber-form" onSubmit={updateRecognize}>
-              <input
-                type="text"
-                placeholder="번호판 직접 입력해주세요"
-                className="input-field"
-                value={inputFullNumber}
-                onChange={(e) => setInputFullNumber(e.target.value)}
-              />
-              <button type="submit">Submit</button>
-            </form>
-          </div>
-        )}
-      </div>
+      {isAnalyzed && (
+        <div className="result-box">
+          <p>분석완료</p>
+          <img src={resultImage} alt="Result Image" />
+          <p>{resultText}</p>
+        </div>
+      )}
     </div>
   );
 }
 
-export default MultipleFileUpload;
+export default AnalysisResult;

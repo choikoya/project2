@@ -33,8 +33,8 @@ function Header() {
         <ul className="nav-list">
         <li><Link to="/notice">공지사항</Link></li>
           <li><Link to="/dashboard">모니터링</Link></li>
-          <li>차량 조회</li>
-          <li><Link to="/upload">번호판 분석</Link> {/* 번호판 분석 클릭 시 /upload로 이동 */}</li>
+          <li><Link to="/timetable">입출차 조회</Link></li>
+          <li><Link to="/result">번호판 분석</Link> {/* 번호판 분석 클릭 시 /upload로 이동 */}</li>
           
         </ul>
       </nav>
@@ -45,7 +45,7 @@ function Header() {
         {isLoggedIn ? (
           <span className='nav-link logout-button' onClick={handleLogout}>로그아웃</span> // 로그아웃 처리
         ) : (
-          <span><Link to="/login">로그인</Link></span> // 로그인 페이지로 이동
+          <span><Link to="/">로그인</Link></span> // 로그인 페이지로 이동
         )}
       </div>
     </header>

@@ -1,0 +1,81 @@
+.time-table-container {
+    margin: 20px auto;
+    width: 80%;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .search-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .datepicker-container {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .datepicker-container .react-datepicker-wrapper {
+    width: 200px; /* DatePicker의 넓이를 고정 */
+  }
+  
+  .search-controls button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .search-controls button:hover {
+    background-color: #45a049;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  table th, table td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 12px;
+  }
+  
+  table th {
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+  }
+  
+  table td {
+    text-align: center;
+  }
+  
+  .table-no-data {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .button-group {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .action-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px; 
+    border: none;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .action-button:hover {
+    background-color: #45a049;
+  }
+  

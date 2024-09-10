@@ -5,11 +5,12 @@ import Header from './components/header'; // 헤더 컴포넌트
 import Footer from './components/footer'; // 푸터 컴포넌트
 import LoginPage from './login';
 import Dashboard from './dashboard';
-import FileUpload from './fileUpload'; // 파일 업로드 페이지 컴포넌트
+import AnalysisResult from './analysisResult'; // 분석결과 페이지 컴포넌트
 import AdminPage from './adminPage';
 import Notice from './notice';
 import NoticeDetail from './noticeDetail';
 import NoticeWrite from './noticeWrite';
+import TimeTable from './timeTable';
 
 function Layout({ children }) {
   const location = useLocation();
@@ -35,11 +36,13 @@ function App() {
         <Routes>
           <Route path='/' element={<LoginPage />} />
           <Route path='/dashboard' element={<Dashboard/>}/>
-          <Route path="/upload" element={<FileUpload />} />
+          <Route path="/result" element={<AnalysisResult />} />
           <Route path="/adminPage" element={<AdminPage />} />
           <Route path="/notice" element={<Notice />} /> {/* 공지사항 리스트 페이지 */}
           <Route path="/notice/:id" element={<NoticeDetail />} /> {/* 공지사항 상세 페이지 */}
           <Route path="/write" element={<NoticeWrite />} /> {/* 공지사항  페이지 */}
+          <Route path="/timetable" element={<TimeTable />} />
+
 
         </Routes>
       </Layout>
