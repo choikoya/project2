@@ -8,6 +8,7 @@ const TimeTable = () => {
   const [endDate, setEndDate] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
   const [allData, setAllData] = useState([]);
+  
 
   // 백엔드에서 데이터를 요청하여 받아오는 함수
   const fetchData = async () => {
@@ -48,7 +49,7 @@ const TimeTable = () => {
 
   return (
     <div className="time-table-container">
-      <h2>차량 조회</h2>
+      <h2>입출차 차량 조회</h2>
       <div className="search-controls">
         <div className="datepicker-container">
           <DatePicker

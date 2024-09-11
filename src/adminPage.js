@@ -16,7 +16,7 @@ const AdminPage = () => {
 
       console.log("토큰", token);
 
-      const response = await fetch('http://192.168.0.142:8080/admin/members', {
+      const response = await fetch('http://192.168.0.133:8080/admin/members', {
         method: 'GET',
         headers: {
           "Authorization": `Bearer ${token}`, // 토큰을 헤더에 포함
@@ -57,7 +57,7 @@ const AdminPage = () => {
   // 승인 버튼을 클릭했을 때 상태를 업데이트하는 함수 (백엔드로 승인 요청 보내기)
   const handleApproval = async (id) => {
     try {
-      const response = await fetch(`http://192.168.0.142/api/approvals/${id}`, {
+      const response = await fetch(`http://192.168.0.133/api/approvals/${id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ const AdminPage = () => {
       </div>
 
       {/* 사용자 리스트 출력 */}
-      <table>
+      <table className="admin-table">
         <thead>
           <tr>
             <th>차량번호</th>

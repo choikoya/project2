@@ -1,17 +1,21 @@
-.App {
+.app-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 100vh; /* 전체 화면의 높이를 차지하게 설정 */
 }
 
 .main-content {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  flex: 1; /* 메인 콘텐츠가 푸터를 밀어내고 페이지 나머지를 차지 */
+  width: 100%; /* 전체 폭을 차지하게 설정 */
   padding: 20px;
+  box-sizing: border-box;
 }
 
 footer {
-  margin-top: auto;
+  background-color: #013220;
+  color: rgba(240, 238, 238, 0.74);
+  text-align: center;
+  padding: 20px;
+  margin-top: auto; /* 푸터가 페이지 하단에 위치하게 설정 */
+  width: 100%;
 }

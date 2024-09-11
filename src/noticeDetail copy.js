@@ -11,62 +11,59 @@ function NoticeDetail() {
   const [editedTitle, setEditedTitle] = useState(''); // 수정된 제목
   const [editedContent, setEditedContent] = useState(''); // 수정된 내용
 
+  // 공지사항 더미 데이터 (여기서는 간단히 더미 데이터로 처리)
+  const [notices, setNotices] = useState([
+    { id: 4, title: '공지사항입니다', writer: '관리자', date: '2024-09-03 12:52', views: 50, content: '공지사항 내용입니다.' },
+    { id: 3, title: '공지사항입니다', writer: '관리자', date: '2024-09-03 12:52', views: 50, content: '공지사항 내용입니다.' },
+    { id: 2, title: '공지사항입니다', writer: '관리자', date: '2024-09-03 12:52', views: 50, content: '공지사항 내용입니다.' },
+    { id: 1, title: '공지사항입니다', writer: '관리자', date: '2024-09-03 12:52', views: 50, content: '공지사항 내용입니다.' },
+  ]);
+
   // 페이지 로드 시 사용자 역할 및 공지사항 데이터 가져오기
   useEffect(() => {
-    console.log("공지사항 ID:", id); // ID 값 확인
-    const userRole = localStorage.getItem('userRole'); // 로컬 스토리지에서 사용자 역할 확인
+    const userRole = sessionStorage.getItem('userRole'); // 세션에서 사용자 역할 확인
+    
     if (userRole === 'ROLE_ADMIN') {
       setIsAdmin(true); // 관리자인 경우
     }
 
-    const fetchNoticeDetail = async () => {
-      try {
-        const token = localStorage.getItem('authToken');
-        const response = await fetch(`http://192.168.0.133:8080/member/community/${id}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`, // 토큰을 헤더에 포함
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setNotice(data); // 공지사항 데이터를 상태에 저장
-          setEditedTitle(data.title); // 수정 모드에 초기값 설정
-          setEditedContent(data.content); // 수정 모드에 초기값 설정
-          console.log(data);
-        } else {
-          alert('해당 공지사항을 찾을 수 없습니다.');
-          navigate('/notice'); // 공지사항을 찾을 수 없으면 공지사항 페이지로 이동
-        }
-      } catch (error) {
-        console.error('오류 발생:', error);
-        navigate('/notice'); // 오류 발생 시 공지사항 목록으로 이동
-      }
-    };
-
-    fetchNoticeDetail();
-  }, [id, navigate]);
+    // 해당 공지사항 ID로 데이터를 찾음
+    const selectedNotice = notices.find((n) => n.id === parseInt(id));
+    if (selectedNotice) {
+      setNotice(selectedNotice);
+      setEditedTitle(selectedNotice.title); // 수정 모드에 초기값 설정
+      setEditedContent(selectedNotice.content); // 수정 모드에 초기값 설정
+    } else {
+      alert('해당 공지사항을 찾을 수 없습니다.');
+      navigate('/notice'); // 공지사항을 찾을 수 없으면 공지사항 페이지로 이동
+    }
+  }, [id, navigate, navigate]);
 
   // 수정 버튼 클릭 처리
   const handleEdit = () => {
-    setIsEditing(true); // 수정 모드로 전환
+   setIsEditing(true);//수정모드로 전환
+    // 수정 페이지로 이동하거나 수정 폼을 띄우는 로직을 추가할 수 있음
   };
+
 
   // 수정 저장 처리
   const handleSaveEdit = () => {
-    const updatedNotice = { ...notice, title: editedTitle, content: editedContent };
-    setNotice(updatedNotice);
+    const updatedNotices = notices.map((n) => 
+      n.id === notice.id ? { ...n, title: editedTitle, content: editedContent } : n
+    );
+    setNotices(updatedNotices);
     setIsEditing(false); // 수정 모드 종료
   };
+
 
   // 삭제 버튼 클릭 처리
   const handleDelete = () => {
     if (window.confirm('정말 삭제하시겠습니까?')) {
       // 삭제 로직 구현
+      const updatedNotices = notices.filter((n) => n.id !== notice.id);
+      setNotices(updatedNotices);
       alert('삭제되었습니다.');
-      navigate('/notice'); // 삭제 후 공지사항 목록으로 이동
+      navigate('/notice'); // 삭제 후 메인 페이지로 이동
     }
   };
 
@@ -74,7 +71,7 @@ function NoticeDetail() {
     <div className="notice-detail-page">
       {notice ? (
         <>
-          {isEditing ? (
+         {isEditing ? (
             <div>
               <h2>공지사항 수정</h2>
               <div className="form-group">
@@ -106,23 +103,25 @@ function NoticeDetail() {
               </div>
             </div>
           ) : (
-            <>
-              <h2>{notice.title}</h2>
-              <p>작성자: {notice.member.username}</p>
-              <p>작성일: {new Date(notice.createDate).toLocaleDateString()}</p>
-              <p>조회수: {notice.count}</p>
-              <div className="notice-content">{notice.content}</div>
+        <>
+          <h2>{notice.title}</h2>
+          <p>작성자: {notice.writer}</p>
+          <p>작성일: {notice.date}</p>
+          <p>조회수: {notice.views}</p>
+          <div className="notice-content">
+            {notice.content}
+          </div>
 
-              {/* 관리자인 경우 수정/삭제 버튼 표시 */}
-              {isAdmin && (
-                <div className="admin-buttons">
-                  <button className="edit-button" onClick={handleEdit}>수정</button>
-                  <button className="delete-button" onClick={handleDelete}>삭제</button>
-                </div>
-              )}
-            </>
-          )}
+          {/* 관리자인 경우 수정/삭제 버튼 표시 */}
+          {/* {isAdmin && ( */}
+            <div className="admin-buttons">
+              <button className="edit-button" onClick={handleEdit}>수정</button>
+              <button className="delete-button" onClick={handleDelete}>삭제</button>
+            </div>
+          {/* )} */}
         </>
+          )}
+          </>
       ) : (
         <p>공지사항을 불러오는 중입니다...</p>
       )}

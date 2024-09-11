@@ -1,0 +1,94 @@
+.result-page {
+    padding: 20px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+}
+
+.image-result {
+    display: flex;
+    justify-content: space-between; /* 좌우 끝 여백 없애기 */
+    margin-top: 20px;
+    gap: 10px; /* 이미지 박스 간격 추가 */
+}
+
+.image-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 50%;
+    background-color: #f9f9f9;
+    height: 500px; /* 이미지 박스 높이 조정 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px; /* 분석 박스와의 간격을 유지하기 위한 마진 */
+}
+
+.image-box img {
+    max-width: 100%;
+    max-height: 100%; /* 이미지가 박스보다 크지 않도록 제한 */
+    object-fit: contain; /* 이미지가 박스 안에서 비율을 유지하며 맞추어짐 */
+}
+
+/* 결과 박스 스타일 */
+.result-box {
+    margin-top: 20px;
+    background-color: #e5eef7; /* 기본 연한 배경색 */
+    border: 2px solid #4c7faf; /* 기본 보더 색상 */
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* 분석 결과와 이미지가 공간을 나누어 정렬됨 */
+    margin-left: auto;
+    margin-right: auto;
+    height: 80px; /* 박스 높이 조정 */
+}
+
+.result-box img {
+    width: 50px;
+    height: auto;
+    margin-left: 10px;
+}
+
+/* 상태 표시 박스 */
+.status {
+    background-color: #3f7bb4; /* 기본 색상 */
+    color: white;
+    padding: 10px;
+    margin-left: 10px;
+    border-radius: 5px;
+}
+
+/* 결과 텍스트 스타일 */
+.result-text {
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+/* Dynamic background and border color classes */
+.green-background {
+    background-color: #4CAF50; /* 녹색 */
+    border-color: #4CAF50; /* 보더도 녹색 */
+}
+
+.yellow-background {
+    background-color: #FFEB3B; /* 노랑색 */
+    border-color: #FFEB3B; /* 보더도 노랑색 */
+}
+
+.red-background {
+    background-color: #F44336; /* 빨간색 */
+    border-color: #F44336; /* 보더도 빨간색 */
+}
+
+/* Lighter background for result box */
+.light-green-background {
+    background-color: #C8E6C9; /* 연한 녹색 */
+}
+
+.light-yellow-background {
+    background-color: #FFF9C4; /* 연한 노랑색 */
+}
+
+.light-red-background {
+    background-color: #FFCDD2; /* 연한 빨간색 */
+}

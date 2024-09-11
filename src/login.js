@@ -56,7 +56,7 @@ function LoginPage() {
 
     try {
       // 백엔드 API로 로그인 요청 보내기
-      const response = await fetch('http://192.168.0.142:8080/login', {
+      const response = await fetch('http://192.168.0.133:8080/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ function LoginPage() {
   const handleSignup = async () => {
     // 회원가입을 위한 API 호출
     try {
-      const response = await fetch('http://192.168.0.142:8080/login/signup', {
+      const response = await fetch('http://192.168.0.133:8080/login/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

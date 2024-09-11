@@ -19,13 +19,13 @@ function Layout({ children }) {
   const isLoginPage = location.pathname === '/';
 
   return (
-    <>
+    <div className="app-container">
       {/* 로그인 페이지가 아닌 경우에만 헤더를 렌더링 */}
       {!isLoginPage && <Header />}
-      <main>{children}</main>
+      <main className="main-content">{children}</main>
       {/* 로그인 페이지가 아닌 경우에만 푸터를 렌더링 */}
       {!isLoginPage && <Footer />}
-    </>
+    </div>
   );
 }
 
@@ -38,8 +38,8 @@ function App() {
           <Route path='/dashboard' element={<Dashboard/>}/>
           <Route path="/result" element={<AnalysisResult />} />
           <Route path="/adminPage" element={<AdminPage />} />
-          <Route path="/notice" element={<Notice />} /> {/* 공지사항 리스트 페이지 */}
-          <Route path="/notice/:id" element={<NoticeDetail />} /> {/* 공지사항 상세 페이지 */}
+          <Route path="/notice" element={<Notice />} /> {/* 공지사항 목록 페이지 */}
+          <Route path="/notice/:id" element={<NoticeDetail />} /> 공지사항 상세 페이지
           <Route path="/write" element={<NoticeWrite />} /> {/* 공지사항  페이지 */}
           <Route path="/timetable" element={<TimeTable />} />
 
