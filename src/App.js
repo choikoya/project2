@@ -39,7 +39,7 @@ function App() {
           <Route path="/result" element={<AnalysisResult />} />
           <Route path="/adminPage" element={<AdminPage />} />
           <Route path="/notice" element={<Notice />} /> {/* 공지사항 목록 페이지 */}
-          <Route path="/notice/:id" element={<NoticeDetail />} /> 공지사항 상세 페이지
+          <Route path="/notice/:id" element={<NoticeDetail />} /> {/* 공지사항 상세 페이지 */}
           <Route path="/write" element={<NoticeWrite />} /> {/* 공지사항  페이지 */}
           <Route path="/timetable" element={<TimeTable />} />
 

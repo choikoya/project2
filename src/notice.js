@@ -61,6 +61,7 @@ function Notice() {
   // 페이지 로드 시 사용자 역할 확인 및 공지사항 목록 불러오기
   useEffect(() => {
     
+    console.log('useeffect');
     const userRole = localStorage.getItem('userRole');
     setIsAdmin(userRole === 'ROLE_ADMIN'); // 사용자 역할이 'admin'이면 등록 버튼을 보이게 설정
 
@@ -82,9 +83,9 @@ function Notice() {
   };
 
   // 제목 클릭 시 상세 페이지로 이동
-  const handleTitleClick = (id) => {
-    console.log("Clicked Notice ID:", id); 
-    navigate(`/notice/${id}`);// 공지사항 ID를 통해 상세 페이지로 이동
+  const handleTitleClick = (boardId) => {
+    console.log("Clicked Notice ID:", boardId); 
+    navigate(`/notice/${boardId}`);// 공지사항 ID를 통해 상세 페이지로 이동
   };
 
   return (
@@ -112,12 +113,12 @@ function Notice() {
         <tbody>
           {filteredNotices.length > 0 ? (
             filteredNotices.map((notice, index) => (
-              <tr key={notice.id}> {/* 고유 id로 key 설정 */}
+              <tr key={notice.boardId}> {/* 고유 id로 key 설정 */}
               <td>{index + 1}</td> {/* index를 이용하여 순서 번호 부여 */}
               <td>
                   <span
                     className="notice-title"
-                    onClick={() => handleTitleClick(notice.id)}
+                    onClick={() => handleTitleClick(notice.boardId)}
                     style={{ cursor: 'pointer', color: 'blue' }}
                   >
                     {notice.title}

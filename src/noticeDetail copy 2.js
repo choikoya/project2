@@ -1,10 +1,11 @@
+//되는코드.
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'; // React Router 사용
 import './noticeDetail.css'; // 스타일 파일 추가
 
 function NoticeDetail() {
-  const { id } = useParams(); // URL에서 공지사항 ID를 가져옴
-  console.log("나와라", id);
+  const { id} = useParams(); // URL에서 공지사항 ID를 가져옴
+  console.log("나와라",id);
   const navigate = useNavigate();
   const [notice, setNotice] = useState(null); // 공지사항 데이터를 관리하는 상태
   const [isAdmin, setIsAdmin] = useState(false); // 관리자인지 여부를 확인하는 상태
@@ -75,56 +76,54 @@ function NoticeDetail() {
     <div className="notice-detail-page">
       {notice ? (
         <>
-          <div className="notice-header">
-            <div className="title">TITLE: {notice.title}</div>
-            <div className="date">DATE: {new Date(notice.createDate).toLocaleString()}</div>
-          </div>
+          {isEditing ? (
+            <div>
+              <h2>공지사항 수정</h2>
+              <div className="form-group">
+                <label>제목</label>
+                <input
+                  type="text"
+                  value={editedTitle}
+                  onChange={(e) => setEditedTitle(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label>내용</label>
+                <textarea
+                  rows="5"
+                  value={editedContent}
+                  onChange={(e) => setEditedContent(e.target.value)}
+                />
+              </div>
+              <div className="admin-buttons">
+                <button className="edit-button" onClick={handleSaveEdit}>
+                  저장
+                </button>
+                <button
+                  className="cancel-button"
+                  onClick={() => setIsEditing(false)}
+                >
+                  취소
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <h2>{notice.title}</h2>
+              <p>작성자: {notice.member.username}</p>
+              <p>작성일: {new Date(notice.createDate).toLocaleDateString()}</p>
+              <p>조회수: {notice.count}</p>
+              <div className="notice-content">{notice.content}</div>
 
-          <div className="notice-content">
-            {notice.content}
-          </div>
-
-          {/* 관리자 버튼 영역 */}
-          <div className="notice-footer">
-            <div className="button-group">
+              {/* 관리자인 경우 수정/삭제 버튼 표시 */}
               {isAdmin && (
-                <>
+                <div className="admin-buttons">
                   <button className="edit-button" onClick={handleEdit}>수정</button>
                   <button className="delete-button" onClick={handleDelete}>삭제</button>
-                </>
+                </div>
               )}
-            </div>
-            <button className="list-button" onClick={() => navigate('/notice')}>목록</button>
-          </div>
-
-          {/* 하단 목록 예시 */}
-          <table className="notice-list">
-            <thead>
-              <tr>
-                <th>번호</th>
-                <th>제목</th>
-                <th>작성자</th>
-                <th>작성일</th>
-                <th>조회수</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>23</td>
-                <td>writeform test</td>
-                <td>admin</td>
-                <td>2023/09/12</td>
-                <td>5</td>
-              </tr>
-              <tr>
-                <td>22</td>
-                <td>another test</td>
-                <td>admin</td>
-                <td>2023/09/10</td>
-                <td>7</td>
-              </tr>
-            </tbody>
-          </table>
+            </>
+          )}
         </>
       ) : (
         <p>공지사항을 불러오는 중입니다...</p>

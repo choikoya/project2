@@ -1,81 +1,109 @@
 /* 페이지 전체 스타일 */
 .notice-detail-page {
-    width: 60%;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* 제목 스타일 */
-  .notice-detail-page h2 {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #333;
-    border-bottom: 2px solid #eaeaea;
-    padding-bottom: 8px;
-  }
-  
-  /* 기본 텍스트 스타일 */
-  .notice-detail-page p {
-    font-size: 16px;
-    margin: 8px 0;
-    color: #555;
-  }
-  
-  /* 내용 스타일 */
-  .notice-content {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    line-height: 1.6;
-    color: #333;
-  }
-  
-  /* 관리자 버튼 영역 */
-  .admin-buttons {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
-  }
-  
-  /* 수정 버튼 스타일 */
-  .edit-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  /* 삭제 버튼 스타일 */
-  .delete-button {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-  }
-  
-  /* 버튼 hover 효과 */
-  .edit-button:hover,
-  .delete-button:hover {
-    opacity: 0.9;
-  }
-  
-  /* 로딩 중 텍스트 스타일 */
-  .notice-detail-page p {
-    font-size: 16px;
-    color: #888;
-    text-align: center;
-    padding: 20px;
-  }
-  
+  width: 80%;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  font-family: 'Arial', sans-serif;
+}
+
+/* 제목, 작성자, 날짜 스타일 */
+.notice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #bbb;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.notice-header .title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+  flex-grow: 1;  /* 제목이 중앙에 위치하도록 설정 */
+}
+
+.notice-header .date {
+  font-size: 14px;
+  color: #888;
+  text-align: right;
+  flex-basis: 200px;  /* 오른쪽에 고정된 폭을 설정하여 날짜가 우측에 위치 */
+}
+
+/* 내용 스타일 */
+.notice-content {
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  line-height: 1.6;
+  min-height: 300px; /* 최소 높이 설정 */
+  overflow-y: auto;  /* 내용이 많아지면 스크롤 */
+}
+
+/* 하단 목록 영역 */
+.notice-footer {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.notice-footer .button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.notice-footer .button-group button {
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid #bbb;
+}
+
+.notice-footer .button-group .edit-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.notice-footer .button-group .delete-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.notice-footer .list-button {
+  background-color: #ddd;
+  color: #333;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.notice-footer .list-button:hover {
+  background-color: #bbb;
+}
+
+.notice-list {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.notice-list th, .notice-list td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+.notice-list th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+  color: #333;
+}
+
+.notice-list td {
+  color: #333;
+}
