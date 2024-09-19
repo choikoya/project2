@@ -12,7 +12,7 @@ function SignupModal({ isOpen, onClose }) {
     console.log('회원가입 정보:', { name, phoneNumber, vehicleNumber });
 
     try {
-        const response = await fetch('http://192.168.0.142:8080/signup', {
+        const response = await fetch('http://192.168.0.133:8080/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, phoneNumber, vehicleNumber }),

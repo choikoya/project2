@@ -1,0 +1,53 @@
+.graph-container {
+    width: 90%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .chart-button {
+    background-color: #e0e0e0;
+    border: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .chart-button:hover {
+    background-color: #d4d4d4;
+  }
+  
+  .chart-button.active {
+    background-color: #4bc0c0;
+    color: white;
+  }
+  
+  .graph-item {
+    margin-top: 20px;
+  }
+  
+  .input-box {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 0 10px;
+    font-size: 16px;
+    outline: none;
+    background-color: #f9f9f9;
+  }
+  
+  .input-box:focus {
+    border-color: #4bc0c0;
+  }
+  

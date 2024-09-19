@@ -11,6 +11,7 @@ import Notice from './notice';
 import NoticeDetail from './noticeDetail';
 import NoticeWrite from './noticeWrite';
 import TimeTable from './timeTable';
+import Graph from './graph';
 
 function Layout({ children }) {
   const location = useLocation();
@@ -42,6 +43,7 @@ function App() {
           <Route path="/notice/:id" element={<NoticeDetail />} /> {/* 공지사항 상세 페이지 */}
           <Route path="/write" element={<NoticeWrite />} /> {/* 공지사항  페이지 */}
           <Route path="/timetable" element={<TimeTable />} />
+          <Route path="/graph" element={<Graph />} />
 
 
         </Routes>

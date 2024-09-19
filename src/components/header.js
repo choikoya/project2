@@ -32,9 +32,9 @@ function Header() {
       <nav>
         <ul className="nav-list">
         <li><Link to="/notice">공지사항</Link></li>
-          <li><Link to="/dashboard">모니터링</Link></li>
+          <li><Link to="/dashboard">대시보드</Link></li>
+          <li><Link to="/result">모니터링</Link> {/* 번호판 분석 클릭 시 /upload로 이동 */}</li>
           <li><Link to="/timetable">입출차 조회</Link></li>
-          <li><Link to="/result">번호판 분석</Link> {/* 번호판 분석 클릭 시 /upload로 이동 */}</li>
           
         </ul>
       </nav>
