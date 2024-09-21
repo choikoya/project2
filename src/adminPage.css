@@ -97,50 +97,83 @@ h2 {
 
 /* Disabled button style */
 .approve-btn:disabled {
-  background-color: #4CAF50; /* Keep green for disabled buttons */
-  cursor: not-allowed;
-}
+  background-color: #4}
 
-/* Filter button styles */
-.filter-buttons {
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.filter-btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.all-btn {
-  background-color: #f0f0f0;
-  color: black;
-}
-
-.pending-btn {
-  background-color: #ffba3b; /* 주황색 */
-  color: white;
-}
-
-.approved-btn {
-  background-color: #4CAF50;
-  color: white;
-}
-
-/* Hover 상태에서 색상 변경 */
-.all-btn:hover {
-  background-color: #d6d6d6;
-}
-
-.pending-btn:hover {
-  background-color: #ffc219;
-}
-
-.approved-btn:hover {
-  background-color: #22c02a;
-}
+  .approve-btn:disabled {
+    background-color: #4CAF50; /* Disabled 상태일 때도 녹색 */
+    cursor: not-allowed; /* Disabled 상태일 때 커서 모양 변경 */
+  }
+  
+  /* Filter 버튼 스타일 */
+  .filter-buttons {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .filter-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .all-btn {
+    background-color: #f0f0f0;
+    color: black;
+  }
+  
+  .pending-btn {
+    background-color: #ffba3b; /* 주황색 */
+    color: white;
+  }
+  
+  .approved-btn {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  /* Hover 상태에서 색상 변경 */
+  .all-btn:hover {
+    background-color: #d6d6d6;
+  }
+  
+  .pending-btn:hover {
+    background-color: #ffc219;
+  }
+  
+  .approved-btn:hover {
+    background-color: #22c02a;
+  }
+  
+  /* 페이지네이션 버튼 스타일 */
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  
+  .pagination button {
+    padding: 10px 15px;
+    margin: 0 5px;
+    border: 1px solid #007bff;
+    background-color: #fff;
+    color: #007bff;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+  
+  .pagination button:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .pagination button:disabled {
+    background-color: #e0e0e0;
+    color: #a0a0a0;
+    cursor: not-allowed;
+  }
+  

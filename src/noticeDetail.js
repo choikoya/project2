@@ -7,70 +7,121 @@ function NoticeDetail() {
   console.log("나와라", id);
   const navigate = useNavigate();
   const [notice, setNotice] = useState(null); // 공지사항 데이터를 관리하는 상태
-  const [isAdmin, setIsAdmin] = useState(false); // 관리자인지 여부를 확인하는 상태
-  const [isEditing, setIsEditing] = useState(false); // 수정 모드 상태
-  const [editedTitle, setEditedTitle] = useState(''); // 수정된 제목
-  const [editedContent, setEditedContent] = useState(''); // 수정된 내용
+  const [reply, setReply] =useState([]);  //댓글
+  const fileNames = notice && notice.fileName ? notice.fileName.split(',') : [];
 
+
+  const token = localStorage.getItem('authToken');
   // 페이지 로드 시 사용자 역할 및 공지사항 데이터 가져오기
   useEffect(() => {
     console.log("공지사항 ID:", id); // ID 값 확인
-    const userRole = localStorage.getItem('userRole'); // 로컬 스토리지에서 사용자 역할 확인
-    if (userRole === 'ROLE_ADMIN') {
-      setIsAdmin(true); // 관리자인 경우
-    }
 
-    const fetchNoticeDetail = async () => {
-      try {
-        const token = localStorage.getItem('authToken');
-        const response = await fetch(`http://192.168.0.133:8080/member/community/${id}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`, // 토큰을 헤더에 포함
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setNotice(data); // 공지사항 데이터를 상태에 저장
-          setEditedTitle(data.title); // 수정 모드에 초기값 설정
-          setEditedContent(data.content); // 수정 모드에 초기값 설정
-          console.log(data);
-        } else {
-          alert('해당 공지사항을 찾을 수 없습니다.');
-          navigate('/notice'); // 공지사항을 찾을 수 없으면 공지사항 페이지로 이동
-        }
-      } catch (error) {
-        console.error('오류 발생:', error);
-        navigate('/notice'); // 오류 발생 시 공지사항 목록으로 이동
-      }
+    const fetchData = async () => {
+      await fetchNoticeDetail();
+      await fetchNoticeDetailReply ();
     };
 
-    fetchNoticeDetail();
-  }, [id, navigate]);
+    fetchData();
+}, [id, navigate]);
+
+  const fetchNoticeDetail = async () => {
+  try {
+      console.log("Fetching notice detail...");
+      const response = await fetch(`http://192.168.0.142:8080/member/community/${id}`, {
+          method: 'GET',
+          headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+          },
+      });
+
+      if (response.ok) {
+          const data = await response.json();
+          console.log("Notice data:", data); // Check if data is received
+          setNotice(data);
+      } else {
+          console.error('Failed to fetch notice:', response.status);
+          alert('해당 공지사항을 찾을 수 없습니다.(작성자만 열람가능)');
+          navigate('/notice');
+      }
+  } catch (error) {
+      console.error('Error fetching notice detail:', error);
+      navigate('/notice');
+  }
+};
+
+const fetchNoticeDetailReply = async () => {
+  try {
+    const response = await fetch(`http://192.168.0.142:8080/member/reply/${id}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`, // Corrected template literal syntax
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      setReply(data); // Save replies to state
+      console.log(data); // Log the received data
+    } else {
+      alert('해당 공지사항의 댓글을 찾을 수 없습니다.');
+      navigate('/notice'); // Navigate if replies are not found
+    }
+  } catch (error) {
+    console.error('오류 발생:', error);
+    navigate('/notice'); // Navigate on error
+  }
+};
+
 
   // 수정 버튼 클릭 처리
   const handleEdit = () => {
-    setIsEditing(true); // 수정 모드로 전환
+    navigate(`/reWrite/${id}`); 
   };
 
-  // 수정 저장 처리
-  const handleSaveEdit = () => {
-    const updatedNotice = { ...notice, title: editedTitle, content: editedContent };
-    setNotice(updatedNotice);
-    setIsEditing(false); // 수정 모드 종료
-  };
+  
 
   // 삭제 버튼 클릭 처리
-  const handleDelete = () => {
-    if (window.confirm('정말 삭제하시겠습니까?')) {
-      // 삭제 로직 구현
-      alert('삭제되었습니다.');
-      navigate('/notice'); // 삭제 후 공지사항 목록으로 이동
-    }
-  };
+  const handleDelete =  async () =>{
+   
 
+  
+    if (window.confirm('정말 삭제하시겠습니까?')) {
+
+      try {
+      // 삭제 로직 구현
+     
+      const response = await fetch(`http://localhost:8080/member/community/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`, // 토큰을 헤더에 포함
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.ok) {
+        alert('삭제되었습니다.');
+        navigate('/notice'); // 공지사항을 찾을 수 없으면 공지사항 페이지로 이동
+      } 
+      else if (response.status==403){
+        alert('작성자만 삭제 권한 가집니다.');
+        navigate('/notice');
+      }
+    }
+      
+     catch (error) {
+      console.error('오류 발생:', error);
+      navigate('/notice'); // 오류 발생 시 공지사항 목록으로 이동
+    }
+     
+    
+ 
+  };
+}
+const handleReply=   () =>{
+  navigate(`/replywrite/${id}`)
+
+}
   return (
     <div className="notice-detail-page">
       {notice ? (
@@ -82,19 +133,41 @@ function NoticeDetail() {
 
           <div className="notice-content">
             {notice.content}
+           
           </div>
+          <div>
+    {fileNames.length > 0 ? (
+      fileNames.map((fileName, index) => (
+        <a
+          key={index} // Use index as key; consider a better unique identifier if available
+          href={`http://localhost:8080/image/${fileName.trim()}`} // Use trimmed file names
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ textDecoration: 'none', color: '#007bff', display: 'block' }} // Change display to block for better readability
+          onMouseOver={(e) => e.currentTarget.style.textDecoration = 'underline'}
+          onMouseOut={(e) => e.currentTarget.style.textDecoration = 'none'}
+        >
+          {fileName.trim()} {/* Trim to remove any extra spaces */}
+        </a>
+      ))
+    ) : (
+      <span>No files available</span> // Optional: Message if no files are present
+    )}
+  </div>
 
           {/* 관리자 버튼 영역 */}
           <div className="notice-footer">
             <div className="button-group">
-              {isAdmin && (
+              
                 <>
                   <button className="edit-button" onClick={handleEdit}>수정</button>
                   <button className="delete-button" onClick={handleDelete}>삭제</button>
+                  <button className="edit-button" onClick={handleReply}>댓글</button>
                 </>
-              )}
+              
             </div>
             <button className="list-button" onClick={() => navigate('/notice')}>목록</button>
+            
           </div>
 
           {/* 하단 목록 예시 */}
@@ -102,28 +175,23 @@ function NoticeDetail() {
             <thead>
               <tr>
                 <th>번호</th>
-                <th>제목</th>
+                <th>내용</th>
                 <th>작성자</th>
                 <th>작성일</th>
-                <th>조회수</th>
+                
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>23</td>
-                <td>writeform test</td>
-                <td>admin</td>
-                <td>2023/09/12</td>
-                <td>5</td>
-              </tr>
-              <tr>
-                <td>22</td>
-                <td>another test</td>
-                <td>admin</td>
-                <td>2023/09/10</td>
-                <td>7</td>
-              </tr>
+            {reply.map((comment, index) => (
+            <tr key={comment.boardReId}>
+              <td>{index + 1}</td> {/* Auto incrementing number */}
+              <td>{comment.content}</td>
+              <td>{comment.member.username}</td>
+              <td>{new Date(comment.createDate).toLocaleString()}</td> {/* Format date */}
+            </tr>
+          ))}
             </tbody>
+           
           </table>
         </>
       ) : (

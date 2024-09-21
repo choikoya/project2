@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './modal.css'; // 스타일 파일 (필요 시)
+import ZoomableImage from './ZoomableImage'; // ZoomableImage 컴포넌트 import
 
 const Modal = ({ selectedCar, newCarNumber, setNewCarNumber, onSave, onClose }) => {
   const [photoUrl, setPhotoUrl] = useState('');
@@ -24,6 +25,7 @@ const Modal = ({ selectedCar, newCarNumber, setNewCarNumber, onSave, onClose }) 
     <div className="modal">
       <div className="modal-content">
         <h2>차량번호 수정</h2>
+        
         {photoUrl && <img src={photoUrl} alt="차량 사진" style={{ width: '300px' }} />}
         <div>
           <label>차량번호: </label>

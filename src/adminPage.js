@@ -6,35 +6,39 @@ const AdminPage = () => {
   const [filteredApprovals, setFilteredApprovals] = useState([]); // 필터된 사용자 목록
   const [filterStatus, setFilterStatus] = useState('전체'); // 기본 필터 상태는 '전체'
   const [role, setRole] = useState(''); // 역할 상태 저장
+  const [loading, setLoading] = useState(false); // 로딩 상태
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const approvalsPerPage = 10; // 한 페이지당 표시할 항목 수
+  const [pageRange, setPageRange] = useState([1, 10]); // 페이지네이션 범위 (처음 1~10)
+  const [changedApprovals, setChangedApprovals] = useState([]); // 변경된 승인 목록 저장
 
   // 페이지 로드 시 승인 목록과 역할을 백엔드에서 불러오는 함수
   const fetchApprovals = async () => {
+    setLoading(true); // 로딩 시작
     try {
       const token = localStorage.getItem('authToken');
       const userRole = localStorage.getItem('userRole');
       setRole(userRole);
 
-      console.log("토큰", token);
-
-      const response = await fetch('http://192.168.0.133:8080/admin/members', {
+      const response = await fetch('http://192.168.0.142:8080/admin/members', {
         method: 'GET',
         headers: {
-          "Authorization": `Bearer ${token}`, // 토큰을 헤더에 포함
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       });
-      console.log(response);
 
       if (response.ok) {
         const data = await response.json();
-        console.log("데이터", data);
-        setApprovals(data); // 전체 목록을 상태에 저장
+        setApprovals(data);
         setFilteredApprovals(data); // 기본적으로 전체 목록을 필터된 목록으로 설정
       } else {
         console.error('데이터를 불러오는데 실패했습니다.');
       }
     } catch (error) {
       console.error('오류 발생:', error);
+    } finally {
+      setLoading(false); // 로딩 종료
     }
   };
 
@@ -50,40 +54,137 @@ const AdminPage = () => {
     } else if (filterStatus === '승인완료') {
       setFilteredApprovals(approvals.filter((approval) => approval.register === true));
     } else if (filterStatus === '미승인') {
-      setFilteredApprovals(approvals.filter((approval) => approval.register === false));
+      // 미승인 목록에서도 승인된 항목이 남아 있도록 처리
+      setFilteredApprovals(approvals.filter((approval) => approval.register === false || changedApprovals.includes(approval.username)));
     }
-  }, [filterStatus, approvals]);
+  }, [filterStatus, approvals, changedApprovals]);
 
-  // 승인 버튼을 클릭했을 때 상태를 업데이트하는 함수 (백엔드로 승인 요청 보내기)
+  // 승인 버튼을 클릭했을 때 상태를 업데이트하는 함수
   const handleApproval = async (id) => {
+    // UI에서 승인 상태를 미리 변경하여 "승인완료"로 보여줌
+    setApprovals((prevApprovals) =>
+      prevApprovals.map((approval) =>
+        approval.username === id ? { ...approval, register: true } : approval
+      )
+    );
+
+    setFilteredApprovals((prevFiltered) =>
+      prevFiltered.map((approval) =>
+        approval.username === id ? { ...approval, register: true } : approval
+      )
+    );
+
+    // 승인된 항목을 변경된 목록에 추가하여 미승인 목록에서도 유지
+    setChangedApprovals((prevChanged) => [...prevChanged, id]);
+
     try {
-      const response = await fetch(`http://192.168.0.133/api/approvals/${id}`, {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`http://192.168.0.142:8080/admin/members/register?username=${id}`, {
         method: 'POST',
         headers: {
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ status: '승인완료' }), // 승인 완료 상태를 전송
       });
 
-      if (response.ok) {
-        // 승인 완료 후 상태를 업데이트 (현재는 프론트에서만 처리)
-        setApprovals((prevApprovals) =>
-          prevApprovals.map((approval) =>
-            approval.username === id ? { ...approval, register: true } : approval
-          )
-        );
-      } else {
-        console.error('승인 요청 실패');
+      if (!response.ok) {
+        throw new Error(`승인 요청 실패: ${response.status} ${response.statusText}`);
       }
     } catch (error) {
       console.error('승인 요청 중 오류 발생:', error);
+
+      // 서버 요청 실패 시 UI 상태 복구
+      setApprovals((prevApprovals) =>
+        prevApprovals.map((approval) =>
+          approval.username === id ? { ...approval, register: false } : approval
+        )
+      );
+
+      setFilteredApprovals((prevFiltered) =>
+        prevFiltered.map((approval) =>
+          approval.username === id ? { ...approval, register: false } : approval
+        )
+      );
+
+      // 승인된 목록에서 항목 제거
+      setChangedApprovals((prevChanged) => prevChanged.filter((username) => username !== id));
     }
+  };
+
+  const formatPhoneNumber = (phoneNumber) => {
+    if (phoneNumber.length !== 11) {
+      return phoneNumber; // 오류 처리: 잘못된 전화번호
+    }
+    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7)}`;
+  };
+
+  // 페이지 변경 핸들러
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // 페이지 범위 변경 핸들러
+  const handleNextPageRange = () => {
+    setPageRange([pageRange[0] + 10, pageRange[1] + 10]);
+    setCurrentPage(pageRange[0] + 10); // 범위 변경 후 첫 페이지로 이동
+  };
+
+  const handlePrevPageRange = () => {
+    setPageRange([pageRange[0] - 10, pageRange[1] - 10]);
+    setCurrentPage(pageRange[0] - 10); // 범위 변경 후 첫 페이지로 이동
+  };
+
+  // 현재 페이지에 맞는 승인 목록을 계산
+  const indexOfLastApproval = currentPage * approvalsPerPage;
+  const indexOfFirstApproval = indexOfLastApproval - approvalsPerPage;
+  const currentApprovals = filteredApprovals.slice(indexOfFirstApproval, indexOfLastApproval);
+
+  // 총 페이지 수 계산
+  const totalPages = Math.ceil(filteredApprovals.length / approvalsPerPage);
+
+  // 페이지네이션 버튼을 생성하는 함수
+  const renderPaginationButtons = () => {
+    const pageButtons = [];
+
+    // 페이지 범위 내에서 버튼 생성
+    for (let i = pageRange[0]; i <= pageRange[1] && i <= totalPages; i++) {
+      pageButtons.push(
+        <button
+          key={i}
+          onClick={() => handlePageChange(i)}
+          className={`pagination-btn ${currentPage === i ? 'active' : ''}`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return (
+      <div className="pagination">
+        {/* 이전 화살표 버튼 (10페이지 이전으로 이동) */}
+        {pageRange[0] > 1 && (
+          <button onClick={handlePrevPageRange} className="pagination-arrow">
+            &lt;
+          </button>
+        )}
+        {pageButtons}
+        {/* 다음 화살표 버튼 (10페이지 이후로 이동) */}
+        {pageRange[1] < totalPages && (
+          <button onClick={handleNextPageRange} className="pagination-arrow">
+            &gt;
+          </button>
+        )}
+      </div>
+    );
   };
 
   return (
     <div className="admin-page">
       <h2>회원 정보 리스트</h2>
-      
+
+      {/* 로딩 중일 때 메시지 표시 */}
+      {loading && <p>로딩 중...</p>}
+
       {/* 필터링 버튼 */}
       <div className="filter-buttons">
         <button className={`filter-btn all-btn ${filterStatus === '전체' ? 'active' : ''}`} onClick={() => setFilterStatus('전체')}>전체</button>
@@ -96,15 +197,15 @@ const AdminPage = () => {
         <thead>
           <tr>
             <th>차량번호</th>
-            <th>핸드폰 번호</th> {/* 핸드폰 번호는 API에서 제공되지 않으면 임시 필드 사용 */}
+            <th>핸드폰 번호</th>
             <th>확인</th>
           </tr>
         </thead>
         <tbody>
-          {filteredApprovals.map((approval) => (
+          {currentApprovals.map((approval) => (
             <tr key={approval.username}>
-              <td>{approval.username}</td> {/* 차량번호에 username 사용 */}
-              <td>{approval.phoneNumber || "번호 없음"}</td> {/* 핸드폰 번호가 없으면 "번호 없음" */}
+              <td>{approval.username}</td>
+              <td>{formatPhoneNumber(approval.phonenumber) || '번호 없음'}</td>
               <td>
                 <button
                   className={`approve-btn ${approval.register ? 'approved' : 'pending'}`}
@@ -118,6 +219,9 @@ const AdminPage = () => {
           ))}
         </tbody>
       </table>
+
+      {/* 페이지네이션 버튼 렌더링 */}
+      {renderPaginationButtons()}
     </div>
   );
 };

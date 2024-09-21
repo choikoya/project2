@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 function NoticeWrite() {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [files, setFiles] = useState([]); // 백엔드에 보내는 파일 배열
+  const [file1, setFile1] = useState(null); // 백엔드에 보내는 파일
+  // const [isNotice, setIsNotice] = useState(false);
 
   const navigate = useNavigate();
 
@@ -17,8 +18,8 @@ function NoticeWrite() {
     setContent(e.target.value);
   };
 
-  const handleFileChange = (e) => {
-    setFiles(Array.from(e.target.files)); // 선택한 파일들을 배열로 변환
+  const handleFile1Change = (e) => {
+    setFile1(e.target.files[0]);
   };
 
   // 공지사항 등록 요청
@@ -30,16 +31,14 @@ function NoticeWrite() {
     formData.append('title', title); // 백엔드에서 기대하는 필드 이름 'title'
     formData.append('content', content); // 백엔드에서 기대하는 필드 이름 'content'
     
-    // 모든 파일을 FormData에 추가
-    files.forEach((file) => {
-      formData.append('files', file); // 백엔드에서 기대하는 필드 이름 'files'
-    });
+       // 파일이 없는 경우에도 빈 파일 필드를 추가하여 일관성 있게 처리
+    formData.append('file', file1 || new Blob()); // file1이 없으면 빈 Blob 객체를 추가); // 백엔드에서 기대하는 필드 이름 'file'
 
     try {
       const token = localStorage.getItem('authToken'); // 인증 토큰 가져오기
 
       // 백엔드로 POST 요청 전송
-      const response = await fetch('http://192.168.0.142:8080/member/community', {
+      const response = await fetch('http://192.168.0.133:8080/member/community', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`, // 인증 토큰을 포함
@@ -74,6 +73,16 @@ function NoticeWrite() {
             required
           />
         </div>
+        {/* <div className="form-group">
+          <label>
+            <input
+              type="checkbox"
+              checked={isNotice}
+              onChange={(e) => setIsNotice(e.target.checked)}
+            />
+            공지
+          </label>
+        </div> */}
         <div className="form-group">
           <label>내용</label>
           <textarea
@@ -84,12 +93,7 @@ function NoticeWrite() {
           />
         </div>
         <div className="form-group">
-          <input 
-            type="file" 
-            id="files" 
-            onChange={handleFileChange} 
-            multiple // 여러 파일 선택 가능
-          />
+          <input type="file" id="file" onChange={handleFile1Change} />
         </div>
 
         <div className="form-buttons">

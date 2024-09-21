@@ -12,8 +12,7 @@ import NoticeDetail from './noticeDetail';
 import NoticeWrite from './noticeWrite';
 import TimeTable from './timeTable';
 import Graph from './graph';
-import NoticeReWrite from './noticeReWrite';
-import NoticeReplyWrite from './noticeReplyWrite';
+
 function Layout({ children }) {
   const location = useLocation();
 
@@ -42,9 +41,7 @@ function App() {
           <Route path="/adminPage" element={<AdminPage />} />
           <Route path="/notice" element={<Notice />} /> {/* 공지사항 목록 페이지 */}
           <Route path="/notice/:id" element={<NoticeDetail />} /> {/* 공지사항 상세 페이지 */}
-          <Route path="/reWrite/:id" element={<NoticeReWrite />} /> {/* 공지사항 수정 페이지 */}
           <Route path="/write" element={<NoticeWrite />} /> {/* 공지사항  페이지 */}
-          <Route path="/replywrite/:id" element={< NoticeReplyWrite/>} />  {/* 공지사항 댓글작성  페이지 */}
           <Route path="/timetable" element={<TimeTable />} />
           <Route path="/graph" element={<Graph />} />
 

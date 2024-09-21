@@ -3,12 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import './notice.css';
 
 function Notice({ hideControls = false }) {
-  const [notices, setNotices] = useState([]); // Current list of notices
-  const [originalNotices, setOriginalNotices] = useState([]); // Store original notices
-  const [searchTerm, setSearchTerm] = useState(''); // State for input value
+  const [notices, setNotices] = useState([]);
+
   const navigate = useNavigate();
 
-  // Fetch notice list from the backend
+  // 공지사항 목록을 백엔드에서 불러오는 함수
   const fetchNotices = async () => {
     try {
       const token = localStorage.getItem('authToken');
@@ -23,7 +22,6 @@ function Notice({ hideControls = false }) {
       if (response.ok) {
         const data = await response.json();
         setNotices(data);
-        setOriginalNotices(data); // Store the original list
       } else {
         console.error('공지사항을 불러오지 못했습니다.');
       }
@@ -38,38 +36,6 @@ function Notice({ hideControls = false }) {
 
   const handleTitleClick = (boardId) => {
     navigate(`/notice/${boardId}`);
-  };
-
-  const searchButton = async (term) => {
-    if (!term) {
-      alert('검색어를 입력하세요.');
-      setNotices(originalNotices); // Reset to original notices
-      return; // Do not proceed with search if no term
-    }
-
-    console.log("Search term:", term);
-    try {
-      const token = localStorage.getItem('authToken');
-      const response = await fetch(`http://192.168.0.142:8080/member/community/search?fullnumber=${term}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setNotices(data);
-        if (data.length === 0) {
-          alert('검색 결과가 없습니다.'); // Alert if no results
-        }
-      } else {
-        console.error('공지사항을 불러오지 못했습니다.');
-      }
-    } catch (error) {
-      console.error('오류 발생:', error);
-    }
   };
 
   return (
@@ -123,13 +89,8 @@ function Notice({ hideControls = false }) {
             type="text"
             className="search-input"
             placeholder="검색어를 입력하세요"
-            value={searchTerm} // Bind input value to state
-            onChange={(e) => setSearchTerm(e.target.value)} // Update state on input change
           />
-          <button 
-            className="search-button" 
-            onClick={() => searchButton(searchTerm)} // Pass state variable to the function
-          >
+          <button className="search-button">
             검색
           </button>
         </div>

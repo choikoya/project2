@@ -23,7 +23,7 @@ function AnalysisResult() {
     }
 
     // 웹소켓 연결 설정(토큰을 url에 포함)
-    const socket = new WebSocket(`ws://192.168.0.142:8080/ws`);
+    const socket = new WebSocket(`ws://192.168.0.133:8080/ws`);
 
     // 서버로부터 메시지를 받았을 때 실행되는 함수
     socket.onmessage = (event) => {
@@ -31,38 +31,36 @@ function AnalysisResult() {
 
       console.log("data", data);
 
-      data.inputImages.forEach((inputImage, index) => {
-        setFileName(inputImage.name2);
-        setLeftImage(`http://localhost:8080/image/${inputImage.name}`);
-        setStep(1); // Set to step 1 for input images
-    
-        // Step 2: After 1 second, display the corresponding output image
-        setTimeout(() => {
-            if (index < data.outputImages.length) {
-                const outputImage = data.outputImages[index];
-                setRightImage(`http://localhost:8080/image/${outputImage.name}`);
-                setStep(2); // Set to step 2 for output images
-                setRecognizeStatus("분석중"); // Set status to "analyzing"
-                setResultText("결과를 기다리는 중입니다..."); // Set result text
-            }
-        }, 1000 * (index + 1)); // Increment delay for each image
-    
+      // 1단계: 좌측 파일명과 이미지 출력
+      setFileName(data.name2);
+      setLeftImage(`ws://192.168.0.133:8080/ws/${data.name1}`);
+      setStep(1); // 좌측 파일명 및 이미지 출력 단계로 설정
+
+      // 2단계: 우측 파일명과 이미지 출력 (1초 후)
+      setTimeout(() => {
+        setRightImage(`ws://192.168.0.133:8080/ws/${data.path2}`);
+        setStep(2); // 우측 파일명 및 이미지 출력 단계로 설정
+        setRecognizeStatus("분석중"); // 좌우 이미지가 뜨면 "분석중" 상태로 설정
+        setResultText("결과를 기다리는 중입니다..."); // 결과 텍스트 설정
+      }, 1000);
 
       // 3단계: 3초 후 결과 출력
       setTimeout(() => {
-        setResultImage(`http://localhost:8080/image/${data.outputImages[index].name2}`);
+        setResultImage(`ws://192.168.0.133:8080/ws/${data.resultImage}`);
+        setResultText(data.status);
 
-       // recognize 값에 따라 분석 상태 업데이트
-        if (data.outputImages[index].fullnumber === inputImage.fullnumber) {
-          setResultText('번호판 일치');
-        }else {
-          setResultText('번호판 불일치');
+        // recognize 값에 따라 분석 상태 업데이트
+        if (data.recognize === 100) {
+          setRecognizeStatus('인식성공 100');
+        } else if (data.recognize === 50) {
+          setRecognizeStatus('인식성공 50');
+        } else {
+          setRecognizeStatus('인식불가');
         }
-        setRecognizeStatus(data.outputImages[index].recognize);
+
         setIsAnalyzed(true); // 분석 완료 상태 업데이트
         setStep(3); // 결과 출력 단계로 설정
       }, 3000); // 3초 후 결과 출력
-    });
     };
 
     // 에러 핸들링

@@ -66,39 +66,83 @@ h2 {
   padding: 20px;
 }
 
+
+
+/* Modal styles */
 .modal {
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: white;
+padding: 20px;
+border-radius: 10px;
+width: 400px;
+max-width: 90%;
+}
+
+.modal-overlay {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: rgba(0, 0, 0, 0.5);
+}
+
+.modal form {
+display: flex;
+flex-direction: column;
+}
+
+.modal form label {
+margin-bottom: 10px;
+}
+
+.modal form input {
+padding: 8px;
+border: 1px solid #ccc;
+border-radius: 4px;
+}
+
+.modal form button {
+margin-top: 10px;
+padding: 10px;
+border: none;
+border-radius: 4px;
+background-color: #007bff;
+color: white;
+cursor: pointer;
+}
+
+.modal form button[type="button"] {
+background-color: #6c757d;
+}
+
+.pagination {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: center; /* 가운데 정렬 */
+  margin: 20px 0; /* 위아래 여백 */
 }
 
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  text-align: center;
-  width: 400px;
+.pagination button {
+  padding: 10px 15px; /* 버튼 패딩 */
+  margin: 0 5px; /* 버튼 간격 */
+  border: 1px solid #007bff; /* 테두리 색상 */
+  background-color: #fff; /* 배경색 */
+  color: #007bff; /* 글자색 */
+  cursor: pointer; /* 커서 스타일 */
+  border-radius: 4px; /* 테두리 둥글게 */
+  transition: background-color 0.3s; /* 부드러운 효과 */
 }
 
-.modal-content img {
-  width: 100%;
-  margin-bottom: 20px;
+.pagination button:hover {
+  background-color: #007bff; /* 호버 시 배경색 변경 */
+  color: white; /* 호버 시 글자색 변경 */
 }
 
-.modal-content input {
-  padding: 10px;
-  margin-bottom: 10px;
-  width: 100%;
-}
-
-.modal-content button {
-  margin: 10px;
-  padding: 10px 20px;
+.pagination button:disabled {
+  background-color: #e0e0e0; /* 비활성화 버튼 색상 */
+  color: #a0a0a0; /* 비활성화 글자색 */
+  cursor: not-allowed; /* 비활성화 커서 스타일 */
 }
