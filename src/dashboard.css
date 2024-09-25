@@ -83,3 +83,10 @@
   max-width: 600px; /* 최대 너비 설정 */
   margin: 0 auto; /* 가운데 정렬 */
 }
+
+
+/* dashboard.css */
+.entry-list-container.blur {
+  filter: blur(5px); /* 흐림 효과 */
+  pointer-events: none; /* 클릭 방지 */
+}

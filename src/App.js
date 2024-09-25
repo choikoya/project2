@@ -14,6 +14,9 @@ import TimeTable from './timeTable';
 import Graph from './graph';
 import NoticeReWrite from './noticeReWrite';
 import NoticeReplyWrite from './noticeReplyWrite';
+import Message from './messageBox';
+import Messages from './messages'
+
 function Layout({ children }) {
   const location = useLocation();
 
@@ -47,6 +50,7 @@ function App() {
           <Route path="/replywrite/:id" element={< NoticeReplyWrite/>} />  {/* 공지사항 댓글작성  페이지 */}
           <Route path="/timetable" element={<TimeTable />} />
           <Route path="/graph" element={<Graph />} />
+          <Route path="/messages" element={<Messages />} /> {/* 쪽지함 경로 연결 */}
 
 
         </Routes>

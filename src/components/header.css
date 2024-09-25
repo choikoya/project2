@@ -20,3 +20,42 @@
 .logout-button {
   cursor: pointer; /* 로그아웃에 손 모양 커서 */
 }
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: red;
+}
+
+.message-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.custom-close-button {
+  background: none; /* 배경 없앰 */
+  border: none; /* 테두리 없앰 */
+  cursor: pointer; /* 커서 변경 */
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem; /* X 아이콘 크기 */
+  color: #333; /* X 아이콘 색상 */
+}
+
+.custom-close-button:hover {
+  color: #ff0000; /* X 아이콘을 호버할 때 색상 변경 */
+}

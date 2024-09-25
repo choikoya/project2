@@ -71,21 +71,17 @@ function LoginPage() {
         const role = data.role; // 서버에서 역할을 응답으로 받는다고 가정합니다.
 
         if (token) {
-          // token과 role을 localStorage와 sessionStorage에 동시에 저장
           localStorage.setItem('authToken', token);
-          localStorage.setItem('userRole', role);
-          sessionStorage.setItem('authToken', token);
-          sessionStorage.setItem('userRole', role);
-        
+          localStorage.setItem('userRole', role); // 역할 저장
           console.log('Received role:', role);
           console.log('Received token:', token);
-        
+
           // 로그인 성공 알림 표시
           alert('로그인 성공!');
-        
+
           // 새쪽지 확인 로직 추가
           await checkForNewMessages(token);
-        
+
           // 사용자 역할에 따라 페이지 이동
           if (role === 'ROLE_ADMIN') {
             navigate('/notice'); // 관리자 페이지
@@ -95,7 +91,6 @@ function LoginPage() {
         } else {
           throw new Error('Token not found in response.');
         }
-        
       } else {
         alert('로그인 실패: 관리자의 승인 대기중입니다.');
       }
