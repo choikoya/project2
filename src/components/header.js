@@ -27,8 +27,12 @@ function Header() {
 
   // 로그아웃 처리 함수
   const handleLogout = () => {
-    localStorage.removeItem('authToken'); // 토큰 삭제
-    localStorage.removeItem('userRole'); // 역할 삭제
+    // sessionStorage와 localStorage에서 authToken 및 userRole 삭제
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('userRole');
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userRole');
+
     setIsLoggedIn(false); // 로그아웃 상태로 전환
     setUserRole(''); // 역할 초기화
     navigate('/'); // 로그아웃 후 홈으로 이동
@@ -63,8 +67,8 @@ function Header() {
           <span>
             {/* 사용자 쪽지함 아이콘 추가 */}
             <button className="message-icon" onClick={openMessageModal}>
-               {/* FontAwesome 'Envelope' 아이콘 */}
-               <FontAwesomeIcon icon={faEnvelope} />
+              {/* FontAwesome 'Envelope' 아이콘 */}
+              <FontAwesomeIcon icon={faEnvelope} />
               {/* 새쪽지가 있을 경우 배지를 표시할 수도 있음 */}
               <span className="new-message-badge">3</span> {/* 예시로 3개의 새쪽지 */}
             </button>

@@ -14,7 +14,6 @@ import TimeTable from './timeTable';
 import Graph from './graph';
 import NoticeReWrite from './noticeReWrite';
 import NoticeReplyWrite from './noticeReplyWrite';
-import Message from './messageBox';
 import Messages from './messages'
 
 function Layout({ children }) {
