@@ -4,6 +4,8 @@ import TimeVehicleChart from './timeVehicleChart';
 import VehicleTypeDoughnut from './vehicleTypeDoughnut';
 import Notice from './notice';
 import Graph from './graph'; 
+import { Doughnut } from 'react-chartjs-2';
+// import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 import './dashboard.css';
 
@@ -21,7 +23,8 @@ function Dashboard() {
 
   // 세션에서 role 값 가져오기
   useEffect(() => {
-    const storedRole = sessionStorage.getItem('role');
+    console.log('Dashboard loaded'); // useEffect가 실행될 때 확인하기 위한 로그
+    const storedRole = sessionStorage.getItem('userRole');
       console.log('Stored role:', storedRole); // role 값이 제대로 가져와지는지 확인
     setRole(storedRole);
   }, []);

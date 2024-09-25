@@ -90,3 +90,10 @@
   filter: blur(5px); /* 흐림 효과 */
   pointer-events: none; /* 클릭 방지 */
 }
+/* VehicleTypeDoughnut의 크기를 조정하는 CSS */
+.vehicle-type-doughnut-container {
+  max-width: 50px; /* 도넛 차트의 최대 너비 */
+
+  margin: 0 auto; /* 가운데 정렬 */
+  padding: 20px; /* 적절한 패딩 추가 */
+}

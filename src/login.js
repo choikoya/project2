@@ -73,8 +73,17 @@ function LoginPage() {
         if (token) {
           localStorage.setItem('authToken', token);
           localStorage.setItem('userRole', role); // 역할 저장
+          
           console.log('Received role:', role);
           console.log('Received token:', token);
+
+          // SessionStorage에도 저장
+  sessionStorage.setItem('authToken', token);
+  sessionStorage.setItem('userRole', role);
+
+
+           // 값이 저장되었는지 확인하는 로그
+  console.log('Session storage set: ', sessionStorage.getItem('userRole'));
 
           // 로그인 성공 알림 표시
           alert('로그인 성공!');

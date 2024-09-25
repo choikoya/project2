@@ -6,23 +6,54 @@ import Modal from 'react-modal'; // Import react-modal
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
-const WS_URL = 'ws://192.168.0.142:8080/ws'; 
 Modal.setAppElement('#root'); // Adjust if your root element has a different ID
 
+// 테스트용 mock 데이터를 임의로 생성하여 사용하기 위한 부분
+const mockData = {
+  inputImages: [
+    { id: 1, name: '2024-09-25_12-00-00', fullnumber: '1234AB', place: '계근장', recognize: '95%', cartype: 'Truck' },
+    { id: 2, name: '2024-09-25_13-00-00', fullnumber: '5678CD', place: '고철장', recognize: '90%', cartype: 'Car' },
+    { id: 2, name: '2024-09-25_13-00-00', fullnumber: '5678CD', place: '고철장', recognize: '90%', cartype: 'Car' },
+    { id: 2, name: '2024-09-25_13-00-00', fullnumber: '5678CD', place: '고철장', recognize: '90%', cartype: 'Car' },
+    { id: 2, name: '2024-09-25_13-00-00', fullnumber: '5678CD', place: '고철장', recognize: '90%', cartype: 'Car' },
+    { id: 2, name: '2024-09-25_13-00-00', fullnumber: '5678CD', place: '고철장', recognize: '90%', cartype: 'Car' },
+    { id: 2, name: '2024-09-25_13-00-00', fullnumber: '5678CD', place: '고철장', recognize: '90%', cartype: 'Car' },
+    { id: 2, name: '2024-09-25_13-00-00', fullnumber: '5678CD', place: '고철장', recognize: '90%', cartype: 'Car' },
+    { id: 2, name: '2024-09-25_13-00-00', fullnumber: '5678CD', place: '고철장', recognize: '90%', cartype: 'Car' },
+    { id: 2, name: '2024-09-25_13-00-00', fullnumber: '5678CD', place: '고철장', recognize: '90%', cartype: 'Car' },
+  ],
+  outputImages: [
+    { id: 3, name: '2024-09-25_14-00-00', fullnumber: '8765XY', place: '계근장', recognize: '85%', cartype: 'Van' },
+    { id: 4, name: '2024-09-25_15-00-00', fullnumber: '4321EF', place: '고철장', recognize: '88%', cartype: 'Truck' },
+  ],
+};
 
 function parseDateFromName(name) {
-  if (!name || typeof name !== 'string') {
-    console.error('Invalid name:', name);
-    return null;
+  const timestampStr = name.match(/(\d{4}-\d{2}-\d{2})_(\d{2}-\d{2}-\d{2})/);
+  if (!timestampStr) {
+    console.error('Invalid filename format:', name);
+    return new Date(0); // Return a default date in case of error
   }
-  const match = name.match(/(\d{4}-\d{2}-\d{2})_(\d{2})-(\d{2})-(\d{2})/);
-  if (!match) {
-    console.error('No match found for:', name);
-    return null;
+
+  const [_, datePart, timePart] = timestampStr;
+  const formattedTimePart = timePart.replace(/-/g, ':');
+  const date = new Date(`${datePart}T${formattedTimePart}`);
+  
+  return date;
+}
+
+function parseDateFromName2(name) {
+  const timestampStr = name.match(/(\d{4}-\d{2}-\d{2})_(\d{2}-\d{2}-\d{2})/);
+  if (!timestampStr) {
+    console.error('Invalid filename format:', name);
+    return ''; // Return an empty string in case of error
   }
-  const [_, datePart, hours, minutes, seconds] = match;
-  const [year, month, day] = datePart.split('-');
-  return new Date(year, month - 1, day, hours, minutes, seconds);
+
+  const [_, datePart, timePart] = timestampStr;
+  const formattedTimePart = timePart.replace(/-/g, ':');
+  const date = new Date(`${datePart}T${formattedTimePart}Z`);
+  
+  return date.toLocaleString('sv-SE', { timeZone: 'UTC' }).replace('T', ' ').substring(0, 19);
 }
 
 function sortImages(images) {
@@ -48,7 +79,7 @@ const TimeTable = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [allData, setAllData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const dataPerPage = 10; // 한 페이지당 10개의 데이터를 표시
+  const dataPerPage = 10;
   const [locationFilter, setLocationFilter] = useState('');
   const [selectedRow, setSelectedRow] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -76,32 +107,14 @@ const TimeTable = () => {
 
   // 데이터를 가져오는 부분 (실제 서버와 연결하는 WebSocket은 주석 처리)
   const fetchData = async () => {
-    const socket = new WebSocket(WS_URL);
-  
-    socket.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.inputImages && data.outputImages) {
-          const sortedInputImages = sortImages(data.inputImages, 'weighbridgename');
-          const sortedOutputImages = sortImages(data.outputImages, 'junkyardname');
-          const mergedImages = [...sortedInputImages, ...sortedOutputImages];
-          setAllData(mergedImages);
-        } else {
-          console.error("Unexpected data format:", data);
-        }
-      } catch (error) {
-        console.error("Error parsing message:", error);
-      }
-    };
-
-    socket.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
-
-    return () => {
-      socket.close();
-    };
+    // 테스트용 mock 데이터를 사용하여 임의의 값을 출력
+    const sortedInputImages = sortImages(mockData.inputImages);
+    const sortedOutputImages = sortImages(mockData.outputImages);
+    const mergedImages = [...sortedInputImages, ...sortedOutputImages];
+    const sortedMergedImages = sortImages(mergedImages);
+    setAllData(sortedMergedImages);
   };
+
   const handleSearch = () => {
     const startDateObj = startDate ? new Date(startDate.setHours(0, 0, 0, 0)) : null;
     const endDateObj = endDate ? new Date(endDate.setHours(23, 59, 59, 999)) : null;
@@ -163,7 +176,6 @@ const TimeTable = () => {
       const formData = new FormData();
       formData.append('content', messageContent); // 메시지 내용 추가
       formData.append('fullnumber', selectedRow.fullnumber); // 선택된 차량번호 추가
-      console.log(messageContent, selectedRow.fullnumber);
   
       // 서버로 POST 요청 전송
       const response = await fetch('http://192.168.0.142:8080/admin/message', {
@@ -252,8 +264,6 @@ const TimeTable = () => {
     const currentData = (filteredData.length > 0 ? filteredData : allData).slice(indexOfFirstData, indexOfLastData);
     const totalPages = Math.ceil((filteredData.length > 0 ? filteredData.length : allData.length) / dataPerPage);
   
-    
-    
     return (
       <div className="time-table-container">
         <h2>입출차 차량 조회</h2>
@@ -314,16 +324,7 @@ const TimeTable = () => {
                   <td style={{ cursor: 'pointer', color: 'blue' }} onClick={() => handleCellClick(row)}>
                     {row.fullnumber}
                   </td>
-                  <td>
-                  {
-                    row.weighbridgename 
-                      ? parseDateFromName(row.weighbridgename)?.toLocaleString() 
-                      : row.junkyardname 
-                      ? parseDateFromName(row.junkyardname)?.toLocaleString() 
-                      : 'Invalid Date'
-                  }
-                </td>
-                  {/* <td>{parseDateFromName2(row.name)}</td> */}
+                  <td>{parseDateFromName2(row.name)}</td>
                   <td>{row.place}</td>
                   <td>{row.recognize}</td>
                   <td>{row.cartype}</td>

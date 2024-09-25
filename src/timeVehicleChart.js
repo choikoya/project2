@@ -5,9 +5,9 @@ import { Line } from 'react-chartjs-2';
 
 function TimeVehicleChart({ data, options }) {
   return (
-    <div className="flex-item">
+    
       <Line data={data} options={options} />
-    </div>
+    
   );
 }
 

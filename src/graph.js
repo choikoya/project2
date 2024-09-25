@@ -24,9 +24,7 @@ function Graph() {
         <button className={`chart-button ${activeChart === 'weekly' ? 'active' : ''}`} onClick={() => setActiveChart('weekly')}>
           주간
         </button>
-        <button className={`chart-button ${activeChart === 'daily' ? 'active' : ''}`} onClick={() => setActiveChart('daily')}>
-          일일
-        </button>
+        
       </div>
 
       {/* 연간 차트 */}
