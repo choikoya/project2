@@ -78,8 +78,9 @@ const SearchControls = ({
       {errorMessage && <p className="error-message">{errorMessage}</p>}
       <button onClick={onSearch} className="search-button">조회</button>
       
-      {/* 전체 버튼 추가 */}
-      <button onClick={handleShowAll} className="all-button">전체</button>
+      {/* 전체 버튼 클릭 시 handleShowAll 호출 */}
+      <button onClick={handleShowAll} className="all-button">전체</button>  
+
     </div>
   );
 };

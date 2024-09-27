@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import SearchControl from './searchControl';
@@ -73,10 +73,12 @@ const TimeTable = () => {
 
   const linkHoverStyle = {
     textDecoration: 'underline'
+
+    
   };
+
+  const location = useLocation(); // 현재 페이지 경로를 추적
   
-  
-  const [isIncrementalLoading, setIsIncrementalLoading] = useState(true); // 처음에는 한 줄씩 출력
   const [startDate, setStartDate] = useState(null);
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [endDate, setEndDate] = useState(null);
@@ -93,7 +95,6 @@ const TimeTable = () => {
   const [secondModalIsOpen, setSecondModalIsOpen] = useState(false);
   const [members, setMembers] = useState([]);
   const [formData, setFormData] = useState({
-  
 
     
     fullnumber: '',
@@ -104,115 +105,86 @@ const TimeTable = () => {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [showAll, setShowAll] = useState(false); // 전체 데이터 표시 여부를 위한 상태 추가
 
-  // 입출차 조회 클릭 시 한 줄씩 데이터를 불러오는 동작 추가
-const handleReloadForIncrementalLoad = () => {
-  setFilteredData([]); // 기존 데이터를 초기화
-  setIsIncrementalLoading(true); // 데이터를 한 줄씩 출력하도록 설정
-  setIsFirstLoad(true); // 첫 로드처럼 동작하도록 설정
-  fetchData(); // 데이터를 다시 불러와 한 줄씩 추가하는 동작 수행
-};
-
   useEffect(() => {
-    // 페이지가 처음 로드되면 데이터를 불러옴
     fetchData();
-    const intervalId = setInterval(fetchData, 30000); // 30초마다 데이터 갱신
-    window.handleReloadForIncrementalLoad = handleReloadForIncrementalLoad;
-    return () => clearInterval(intervalId); // 페이지를 벗어날 때 인터벌 해제
-    
+    const intervalId = setInterval(fetchData, 30000);
+    return () => clearInterval(intervalId);
   }, []);
 
-// 데이터를 가져오는 부분 (WebSocket을 통한 서버 연결)
-// 데이터를 가져오는 부분 (WebSocket을 통한 서버 연결)
-const fetchData = async () => {
-  const socket = new WebSocket(WS_URL);
-  socket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    const sortedInputImages = sortImages(data.inputImages, 'weighbridgename');
-    const sortedOutputImages = sortImages(data.outputImages, 'junkyardname');
-    const mergedImages = [...sortedInputImages, ...sortedOutputImages];
-    const sortedMergedImages = sortImages(mergedImages);
-
-    // 한 줄씩 데이터를 추가
-    if (isIncrementalLoading && (isFirstLoad || !showAll)) {
-      const targetDate = '2024-02-01'; // 기본 날짜 설정
-      const filteredByDate = sortedMergedImages.filter(row => {
-        const rowDate = parseDateFromName(row.weighbridgename || row.junkyardname);
-        return rowDate && rowDate.toISOString().slice(0, 10) === targetDate;
-      });
-
-      // 한 줄씩 데이터를 추가
-      filteredByDate.forEach((row, index) => {
-        setTimeout(() => {
-          setFilteredData(prevData => [...prevData, row]); // 이전 데이터에 한 줄씩 추가
-        }, index * 1000); // 각 데이터가 1초 간격으로 추가됨
-      });
-    }
-
-    // showAll이 true일 때는 전체 데이터를 한 번에 보여줌
-    if (showAll || !isIncrementalLoading) {
-      setFilteredData(sortedMergedImages); // 전체 데이터를 한 번에 보여줌
-    }
-
-    setAllData(sortedMergedImages); // 전체 데이터를 저장
-    setIsFirstLoad(false); // 첫 로드가 끝났음을 알림
+  // 데이터를 가져오는 부분 (WebSocket을 통한 서버 연결)
+  const fetchData = async () => {
+    const socket = new WebSocket(WS_URL);
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      const sortedInputImages = sortImages(data.inputImages, 'weighbridgename');
+      const sortedOutputImages = sortImages(data.outputImages, 'junkyardname');
+      const mergedImages = [...sortedInputImages, ...sortedOutputImages];
+      // Sort the merged array based on the date
+      const sortedMergedImages = sortImages(mergedImages);
+  
+      // 전체 데이터를 업데이트
+      setAllData(sortedMergedImages);
+  
+      // 처음 로드 시 2024년 2월 1일 데이터만 필터링
+      if (isFirstLoad && !showAll) {  // 처음 로드면서 전체 버튼이 눌리지 않았을 때만 실행
+        const targetDate = '2024-02-01'; // 2024년 2월 1일
+        const filteredByDate = sortedMergedImages.filter(row => {
+          const rowDate = parseDateFromName(row.weighbridgename || row.junkyardname);
+          return rowDate && rowDate.toISOString().slice(0, 10) === targetDate; // 특정 날짜만 필터링
+        });
+        setFilteredData(filteredByDate); // 필터된 데이터만 설정
+        setIsFirstLoad(false); // 처음 로드 완료 상태로 변경
+      }
+      // showAll이 false일 때만 데이터 유지
+      else if (!showAll) {
+        setFilteredData(sortedMergedImages); // 전체 데이터를 보여주는 상황이 아니면 처음 데이터를 유지
+      }
+    };
+    socket.onerror = (error) => console.error("WebSocket error: ", error);
+    return () => socket.close();
   };
-
-  socket.onerror = (error) => console.error("WebSocket error: ", error);
-  return () => socket.close();
-};
-
-
-
-
-
-
-
   
 
   
 
-const handleSearch = () => {
-  setShowAll(false); // 전체 데이터 보기를 비활성화
-  setIsIncrementalLoading(true); // 데이터를 한 줄씩 출력하도록 설정
-  setIsFirstLoad(true); // 첫 로드처럼 동작하도록 설정
+  const handleSearch = () => {
+    setShowAll(false); // 전체 데이터를 비활성화
+    setIsFirstLoad(true); // 첫 로드처럼 데이터를 다시 불러오게 설정
 
-  // 기존에 필터된 데이터를 비워서 다시 한 줄씩 추가되도록 함
-  setFilteredData([]); 
+     // 필터 상태값을 초기화하여 검색 필터를 리셋
+  setStartDate(null); 
+  setEndDate(null); 
+  setVehicleNumber('');
+  setLocationFilter('');
 
-  const startDateObj = startDate ? new Date(startDate.setHours(0, 0, 0, 0)) : null;
-  const endDateObj = endDate ? new Date(endDate.setHours(23, 59, 59, 999)) : null;
+  // 데이터를 다시 불러오는 fetchData 호출
+  fetchData(); // 데이터 새로 불러오기
 
-  const filtered = allData.filter(row => {
-    const rowDate = parseDateFromName(row.weighbridgename || row.junkyardname);
-    const isDateInRange = (!startDateObj || !endDateObj || (rowDate >= startDateObj && rowDate <= endDateObj));
-    const isVehicleMatch = !vehicleNumber || row.fullnumber.includes(vehicleNumber);
-    const isLocationMatch = !locationFilter || row.place.includes(locationFilter);
-    return isDateInRange && isVehicleMatch && isLocationMatch;
-  });
+  // 필터링 로직 (fetchData 이후 필터된 데이터를 표시할 때 적용)
 
-  // 한 줄씩 추가하는 로직
-  filtered.forEach((row, index) => {
-    setTimeout(() => {
-      setFilteredData(prevData => [...prevData, row]); // 한 줄씩 데이터 추가
-    }, index * 1000); // 1초 간격으로 한 줄씩 추가
-  });
+    const startDateObj = startDate ? new Date(startDate.setHours(0, 0, 0, 0)) : null;
+    const endDateObj = endDate ? new Date(endDate.setHours(23, 59, 59, 999)) : null;
+    
+    const filtered = allData.filter(row => {
+      const rowDate = parseDateFromName(row.weighbridgename || row.junkyardname);
+      const isDateInRange = (!startDateObj || !endDateObj || (rowDate >= startDateObj && rowDate <= endDateObj));
+      const isVehicleMatch = !vehicleNumber || row.fullnumber.includes(vehicleNumber);
+      const isLocationMatch = !locationFilter || row.place.includes(locationFilter);
+      return isDateInRange && isVehicleMatch && isLocationMatch;
+    });
 
-  setCurrentPage(1);
-};
-
-
-
-
-
-   // 전체 데이터를 보여주는 함수
-   const handleShowAll = () => {
-    setIsIncrementalLoading(false); // 전체 데이터를 한 번에 출력하도록 설정
-    setFilteredData(allData); // 전체 데이터를 표시
-    setShowAll(true); // 전체 데이터 보기를 활성화
-    setIsFirstLoad(false); // 첫 로드가 아니므로 false로 설정
+    setFilteredData(filtered);
     setCurrentPage(1);
   };
-  
+
+   // 전체 데이터를 보여주는 함수
+const handleShowAll = () => {
+  setFilteredData(allData); // 전체 데이터를 표시
+  setShowAll(true); // 전체 데이터 보기를 활성화
+  setIsFirstLoad(false); // 첫 로드가 아니므로 false로 설정
+  setCurrentPage(1);
+  console.log('전체', allData);
+};
 
 
   const openModal = (row) => {
