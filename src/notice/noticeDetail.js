@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'; // React Router 사용
-import './noticeDetail.css'; // 스타일 파일 추가
+import '../css/noticeDetail.css'; // 스타일 파일 추가
 
 function NoticeDetail() {
   const { id } = useParams(); // URL에서 공지사항 ID를 가져옴

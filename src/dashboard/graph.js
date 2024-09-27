@@ -3,7 +3,7 @@ import YearlyLineChart from './yearlyLineChart';
 import MonthlyLineChart from './monthlyLineChart';
 import WeeklyLineChart from './weeklyLineChart';
 import DailyLineChart from './dailyLineChart';
-import './chartStyles.css'; // CSS 파일 추가
+import '../css/chartStyles.css'; // CSS 파일 추가
 
 function Graph() {
   const [year, setYear] = useState('2024');

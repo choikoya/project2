@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import EntryList from './entryList';
 import TimeVehicleChart from './timeVehicleChart';
 import VehicleTypeDoughnut from './vehicleTypeDoughnut';
-import Notice from './notice';
+import Notice from '../notice/notice';
 import Graph from './graph'; 
 import { Doughnut } from 'react-chartjs-2';
 // import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Chart, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement } from 'chart.js';
-import './dashboard.css';
+import '../css/dashboard.css';
 
 // Chart.js 플러그인 활성화
 Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, ArcElement);

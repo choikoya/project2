@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './modal.css'; // 스타일 파일 (필요 시)
+import '../css/modal.css'; // 스타일 파일 (필요 시)
 import ZoomableImage from './ZoomableImage'; // ZoomableImage 컴포넌트 import
 
 const Modal = ({ selectedCar, newCarNumber, setNewCarNumber, onSave, onClose }) => {

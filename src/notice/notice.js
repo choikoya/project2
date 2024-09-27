@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './notice.css';
+import '../css/notice.css';
 
 function Notice({ hideControls = false }) {
   const [notices, setNotices] = useState([]); // Current list of notices

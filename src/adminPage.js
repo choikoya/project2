@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './adminPage.css'; // AdminPage에 대한 스타일 파일을 연결
+import './css/adminPage.css'; // AdminPage에 대한 스타일 파일을 연결
 
 const AdminPage = () => {
   const [approvals, setApprovals] = useState([]); // 승인 대기 사용자 목록

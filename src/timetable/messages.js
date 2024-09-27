@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './notice.css';
+import '../css/notice.css';
 
 function Message({ hideControls = false }) {
   const [messages, setMessages] = useState([]); // 쪽지 목록 상태 관리

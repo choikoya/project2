@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './analysisResult.css';
+import './css/analysisResult.css';
 
-function AnalysisResult() {
+function Cctv() {
 
   const [leftImage, setLeftImage] = useState(null);
   const [rightImage, setRightImage] = useState(null);
@@ -107,4 +107,4 @@ function AnalysisResult() {
   );
 }
 
-export default AnalysisResult;
+export default Cctv;

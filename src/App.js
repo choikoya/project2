@@ -1,20 +1,20 @@
 import React from 'react';
-import './App.css';
+import './css/App.css';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
 import Header from './components/header'; // 헤더 컴포넌트
 import Footer from './components/footer'; // 푸터 컴포넌트
 import LoginPage from './login';
-import Dashboard from './dashboard';
+import Dashboard from './dashboard/dashboard';
 import AnalysisResult from './analysisResult'; // 분석결과 페이지 컴포넌트
 import AdminPage from './adminPage';
-import Notice from './notice';
-import NoticeDetail from './noticeDetail';
-import NoticeWrite from './noticeWrite';
-import TimeTable from './timeTable';
-import Graph from './graph';
-import NoticeReWrite from './noticeReWrite';
-import NoticeReplyWrite from './noticeReplyWrite';
-import Messages from './messages'
+import Notice from './notice/notice';
+import NoticeDetail from './notice/noticeDetail';
+import NoticeWrite from './notice/noticeWrite';
+import TimeTable from './timetable/timeTable';
+import Graph from './dashboard/graph';
+import NoticeReWrite from './notice/noticeReWrite';
+import NoticeReplyWrite from './notice/noticeReplyWrite';
+import Messages from './timetable/messages'
 
 function Layout({ children }) {
   const location = useLocation();

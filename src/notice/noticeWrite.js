@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './noticeWrite.css'; // 스타일 파일 추가
+import '../css/noticeWrite.css'; // 스타일 파일 추가
 import { useNavigate } from 'react-router-dom';
 
 function NoticeWrite() {
