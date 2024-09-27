@@ -14,7 +14,7 @@ import TimeTable from './timetable/timeTable';
 import Graph from './dashboard/graph';
 import NoticeReWrite from './notice/noticeReWrite';
 import NoticeReplyWrite from './notice/noticeReplyWrite';
-import Messages from './timetable/messages'
+import Messages from './timetable/messageBox'
 
 function Layout({ children }) {
   const location = useLocation();

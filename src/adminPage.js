@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './css/adminPage.css'; // AdminPage에 대한 스타일 파일을 연결
+import Pagenation from './pagenation'; // 분리된 Pagination 컴포넌트를 import
 
 const AdminPage = () => {
   const [approvals, setApprovals] = useState([]); // 승인 대기 사용자 목록
@@ -54,7 +55,6 @@ const AdminPage = () => {
     } else if (filterStatus === '승인완료') {
       setFilteredApprovals(approvals.filter((approval) => approval.register === true));
     } else if (filterStatus === '미승인') {
-      // 미승인 목록에서도 승인된 항목이 남아 있도록 처리
       setFilteredApprovals(approvals.filter((approval) => approval.register === false || changedApprovals.includes(approval.username)));
     }
   }, [filterStatus, approvals, changedApprovals]);
@@ -118,22 +118,6 @@ const AdminPage = () => {
     return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7)}`;
   };
 
-  // 페이지 변경 핸들러
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  // 페이지 범위 변경 핸들러
-  const handleNextPageRange = () => {
-    setPageRange([pageRange[0] + 10, pageRange[1] + 10]);
-    setCurrentPage(pageRange[0] + 10); // 범위 변경 후 첫 페이지로 이동
-  };
-
-  const handlePrevPageRange = () => {
-    setPageRange([pageRange[0] - 10, pageRange[1] - 10]);
-    setCurrentPage(pageRange[0] - 10); // 범위 변경 후 첫 페이지로 이동
-  };
-
   // 현재 페이지에 맞는 승인 목록을 계산
   const indexOfLastApproval = currentPage * approvalsPerPage;
   const indexOfFirstApproval = indexOfLastApproval - approvalsPerPage;
@@ -141,42 +125,6 @@ const AdminPage = () => {
 
   // 총 페이지 수 계산
   const totalPages = Math.ceil(filteredApprovals.length / approvalsPerPage);
-
-  // 페이지네이션 버튼을 생성하는 함수
-  const renderPaginationButtons = () => {
-    const pageButtons = [];
-
-    // 페이지 범위 내에서 버튼 생성
-    for (let i = pageRange[0]; i <= pageRange[1] && i <= totalPages; i++) {
-      pageButtons.push(
-        <button
-          key={i}
-          onClick={() => handlePageChange(i)}
-          className={`pagination-btn ${currentPage === i ? 'active' : ''}`}
-        >
-          {i}
-        </button>
-      );
-    }
-
-    return (
-      <div className="pagination">
-        {/* 이전 화살표 버튼 (10페이지 이전으로 이동) */}
-        {pageRange[0] > 1 && (
-          <button onClick={handlePrevPageRange} className="pagination-arrow">
-            &lt;
-          </button>
-        )}
-        {pageButtons}
-        {/* 다음 화살표 버튼 (10페이지 이후로 이동) */}
-        {pageRange[1] < totalPages && (
-          <button onClick={handleNextPageRange} className="pagination-arrow">
-            &gt;
-          </button>
-        )}
-      </div>
-    );
-  };
 
   return (
     <div className="admin-page">
@@ -220,8 +168,14 @@ const AdminPage = () => {
         </tbody>
       </table>
 
-      {/* 페이지네이션 버튼 렌더링 */}
-      {renderPaginationButtons()}
+      {/* 페이지네이션 컴포넌트 사용 */}
+      <Pagenation
+        currentPage={currentPage}
+        totalPages={totalPages}
+        pageRange={pageRange}
+        setPageRange={setPageRange}
+        setCurrentPage={setCurrentPage}
+      />
     </div>
   );
 };

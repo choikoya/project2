@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope } from '@fortawesome/free-regular-svg-icons';  // Regular 스타일의 'Envelope' 아이콘 import
 import { faTimes } from '@fortawesome/free-solid-svg-icons';  // Solid 스타일의 'Times' 아이콘 import
 import Modal from 'react-modal'; // react-modal 라이브러리 import
-import Messages from '../timetable/messages'; // 쪽지함 컴포넌트 import
+import Message from '../timetable/messageBox'; // 쪽지함 컴포넌트 import
 
 Modal.setAppElement('#root'); // 모달 접근성 설정
 
@@ -96,7 +96,7 @@ function Header() {
               <FontAwesomeIcon icon={faTimes} /> {/* 'X' 아이콘 */}
             </button>
           </div>
-          <Messages /> {/* Messages 컴포넌트를 모달 안에 렌더링 */}
+          <Message /> {/* Messages 컴포넌트를 모달 안에 렌더링 */}
         </Modal>
       </div>
     </header>

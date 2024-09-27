@@ -1,0 +1,33 @@
+/* timeTableRow.css */
+.timeTable-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .timeTable-table th, .timeTable-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .timeTable-table th {
+    background-color: #f2f2f2;
+  }
+  
+  .timeTable-table td.vehicle-number {
+    color: blue;
+    cursor: pointer;
+  }
+  
+  .timeTable-table td.message-icon button {
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+  
+  .table-no-data {
+    text-align: center;
+    padding: 20px;
+  }
+  
