@@ -72,10 +72,14 @@ function Header() {
         {userRole === 'ROLE_ADMIN' && (
           <span><Link to="/adminPage">관리자 페이지</Link></span>
         )}
+
+{userRole === 'ROLE_MEMBER' && (
+
         <button className="message-icon" onClick={openMessageModal}>
           <FontAwesomeIcon icon={faEnvelope} />
           <span className="new-message-badge">3</span> {/* 새쪽지 예시 */}
         </button>
+)}
 
         {isLoggedIn ? (
           <span className="logout-button" onClick={handleLogout}>로그아웃</span>

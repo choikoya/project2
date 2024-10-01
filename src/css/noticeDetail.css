@@ -1,55 +1,65 @@
-/* 페이지 전체 스타일 */
+/* 공통 페이지 컨테이너 스타일 */
 .notice-detail-page {
-  width: 80%;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  font-family: 'Arial', sans-serif;
+  width: 60%;
+  margin: 30px auto; /* 상단 여백 추가 */
+  padding: 30px; /* 기존 디자인과 일치하도록 패딩 조정 */
+  background-color: #fff; /* 배경색을 기존 스타일에 맞춤 */
+  border-radius: 10px; /* 더 부드러운 모서리 둥글기 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* 전체 페이지와 일관된 그림자 효과 */
+  font-family: 'Roboto', 'Helvetica Neue', 'Arial', sans-serif; /* 동일 폰트 */
 }
 
-/* 제목, 작성자, 날짜 스타일 */
+/* 공지사항 제목, 작성일 스타일 */
 .notice-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #bbb;
+  border-bottom: 2px solid #003366; /* 구분선 */
   padding-bottom: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .notice-header .title {
-  font-size: 24px;
+  font-size: 22px; /* 통일된 폰트 크기 */
   font-weight: bold;
-  color: #333;
-  text-align: center;
-  flex-grow: 1;  /* 제목이 중앙에 위치하도록 설정 */
+  color: #343a40;
 }
 
 .notice-header .date {
   font-size: 14px;
   color: #888;
   text-align: right;
-  flex-basis: 200px;  /* 오른쪽에 고정된 폭을 설정하여 날짜가 우측에 위치 */
 }
 
-/* 내용 스타일 */
+/* 공지사항 내용 스타일 */
 .notice-content {
   padding: 20px;
-  background-color: #fff;
+  background-color: #f4f4f9; /* 동일한 배경색 */
   border: 1px solid #ddd;
+  border-radius: 4px;
   margin-bottom: 20px;
   line-height: 1.6;
   min-height: 300px; /* 최소 높이 설정 */
-  overflow-y: auto;  /* 내용이 많아지면 스크롤 */
+  overflow-y: auto; /* 스크롤 활성화 */
+  font-size: 14px;
 }
 
-/* 하단 목록 영역 */
+/* 첨부파일 링크 스타일 */
+.notice-content a {
+  color: #003366;
+  text-decoration: none;
+  transition: text-decoration 0.3s ease;
+}
+
+.notice-content a:hover {
+  text-decoration: underline;
+}
+
+/* 하단 버튼 영역 */
 .notice-footer {
-  margin-top: 30px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  margin-top: 30px;
 }
 
 .notice-footer .button-group {
@@ -57,34 +67,37 @@
   gap: 10px;
 }
 
-.notice-footer .button-group button {
+.notice-footer .button-group button,
+.notice-footer .list-button {
   padding: 10px 20px;
-  border-radius: 4px;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  border: 1px solid #bbb;
+  transition: background-color 0.3s ease;
 }
 
-.notice-footer .button-group .edit-button {
-  background-color: #4CAF50;
+/* 수정, 삭제, 댓글 버튼 스타일 */
+.notice-footer .edit-button {
+  background-color: #003366;
   color: white;
 }
 
-.notice-footer .button-group .delete-button {
+.notice-footer .delete-button {
   background-color: #f44336;
   color: white;
 }
 
 .notice-footer .list-button {
-  background-color: #ddd;
-  color: #333;
-  padding: 10px 20px;
-  cursor: pointer;
+  background-color: #6c757d;
+  color: white;
 }
 
-.notice-footer .list-button:hover {
-  background-color: #bbb;
+.notice-footer button:hover {
+  opacity: 0.9; /* 호버 시 살짝 투명 효과 */
 }
 
+/* 댓글 테이블 스타일 */
 .notice-list {
   width: 100%;
   margin-top: 20px;

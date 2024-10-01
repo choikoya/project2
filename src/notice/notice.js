@@ -72,6 +72,27 @@ function Notice({ hideControls = false }) {
     }
   };
 
+// searchButton 함수 제거
+
+const handleSearch = (term) => {
+  if (!term) {
+    alert('검색어를 입력하세요.');
+    setNotices(originalNotices); // 검색어가 없으면 원래 공지 목록 복원
+    return;
+  }
+
+  const filteredNotices = originalNotices.filter(notice =>
+    notice.title.toLowerCase().includes(term.toLowerCase()) || // 제목으로 검색
+    notice.member.username.toLowerCase().includes(term.toLowerCase()) // 작성자 이름으로 검색
+  );
+  setNotices(filteredNotices);
+
+  if (filteredNotices.length === 0) {
+    alert('검색 결과가 없습니다.');
+  }
+};
+
+
   return (
     <div className="notice-page">
       <h2>게시판</h2>
@@ -128,7 +149,7 @@ function Notice({ hideControls = false }) {
           />
           <button 
             className="search-button" 
-            onClick={() => searchButton(searchTerm)} // Pass state variable to the function
+            onClick={() => handleSearch(searchTerm)} // Pass state variable to the function
           >
             검색
           </button>

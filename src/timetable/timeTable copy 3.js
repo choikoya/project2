@@ -187,26 +187,16 @@ const handleSearch = () => {
 
 // 데이터를 한 줄씩 추가하는 로직 (한 번에 모든 데이터가 출력되지 않도록)
 const fetchDataWithIncrementalLoad = (sortedMergedImages) => {
-  let index = 0;
-  const interval = 2500; // 2초
-  let lastTime = Date.now(); // 마지막 실행 시간을 기록
-
+  let index = 0; // 인덱스 초기화
   const intervalId = setInterval(() => {
-    const currentTime = Date.now(); 
-    const elapsedTime = currentTime - lastTime; // 경과 시간 계산
-
-    if (elapsedTime >= interval) {
-      if (index < sortedMergedImages.length) {
-        setFilteredData((prevData) => [...prevData, sortedMergedImages[index]]);
-        index++; // 다음 데이터를 위해 인덱스 증가
-        lastTime = currentTime; // 마지막 실행 시간을 갱신
-      } else {
-        clearInterval(intervalId); // 모든 데이터가 출력되면 인터벌 종료
-      }
+    if (index < sortedMergedImages.length) {
+      setFilteredData((prevData) => [...prevData, sortedMergedImages[index]]);
+      index++; // 다음 데이터를 위해 인덱스 증가
+    } else {
+      clearInterval(intervalId); // 모든 데이터가 출력되면 인터벌 종료
     }
-  }, 100); // 0.1초마다 체크하여 정확성을 높임
+  }, 3000); // 2초 간격으로 데이터를 한 줄씩 추가
 };
-
 
 // 데이터를 가져오는 함수 수정
 const fetchData = async () => {

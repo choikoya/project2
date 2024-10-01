@@ -49,10 +49,10 @@ function NoticeWrite() {
 
       console.log(response);
       if (response.ok) {
-        alert('공지사항이 등록되었습니다.');
+        alert('게시글이 등록되었습니다.');
         navigate('/notice'); // 등록 후 공지사항 목록으로 이동
       } else {
-        alert('공지사항 등록에 실패했습니다.');
+        alert('게시글 등록에 실패했습니다.');
       }
     } catch (error) {
       console.error('오류 발생:', error);
@@ -62,7 +62,7 @@ function NoticeWrite() {
 
   return (
     <div className="notice-write-page">
-      <h2>공지사항 작성</h2>
+      <h2>게시글 작성</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="title">제목(*)</label>

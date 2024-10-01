@@ -1,110 +1,120 @@
 import React, { useState, useEffect } from 'react';
 import './css/analysisResult.css';
+import { useNavigate } from 'react-router-dom';
 
-function Cctv() {
-
+function AnalysisResult() {
+  const [inputImages, setInputImages] = useState([]);
+  const [outputImages, setOutputImages] = useState([]);
   const [leftImage, setLeftImage] = useState(null);
   const [rightImage, setRightImage] = useState(null);
-  const [fileName, setFileName] = useState('');
-  const [resultImage, setResultImage] = useState(null);
-  const [resultText, setResultText] = useState('');
-  const [isAnalyzed, setIsAnalyzed] = useState(false);
-  const [recognizeStatus, setRecognizeStatus] = useState('분석 대기중');
-
-  const [step, setStep] = useState(0); // 단계별 상태 추가
+  const [fullnumber, setFullnumber] = useState(null);
+  const [weighbridgename, setWeighbridgename] = useState(null);
+  const [junkyardname, setJunkyardname] = useState(null);
+  const navigate = useNavigate();
+  const [firstMessageTime, setFirstMessageTime] = useState(null);
 
   useEffect(() => {
-    // 로컬 스토리지에서 토큰 가져오기
     const token = localStorage.getItem('authToken');
-
+    const role = localStorage.getItem('userRole');
     if (!token) {
-      console.error('토큰이 없습니다. 로그인을 먼저 해주세요.');
-      return;
+      alert('토큰이 없습니다. 로그인을 먼저 해주세요.');
+      navigate('/');
     }
 
-    // 웹소켓 연결 설정(토큰을 url에 포함)
+    if (role !== "ROLE_ADMIN") {
+      alert('관리자만 접근 가능합니다.');
+      navigate('/notice');
+    }
+
     const socket = new WebSocket(`ws://192.168.0.142:8080/ws`);
 
-    // 서버로부터 메시지를 받았을 때 실행되는 함수
-    socket.onmessage = (event) => {
+    socket.onmessage = async (event) => {
       const data = JSON.parse(event.data);
-
       console.log("data", data);
 
-      data.inputImages.forEach((inputImage, index) => {
-        setFileName(inputImage.name2);
-        setLeftImage(`http://localhost:8080/image/${inputImage.name}`);
-        setStep(1); // Set to step 1 for input images
-    
-        // Step 2: After 1 second, display the corresponding output image
-        setTimeout(() => {
-            if (index < data.outputImages.length) {
-                const outputImage = data.outputImages[index];
-                setRightImage(`http://localhost:8080/image/${outputImage.name}`);
-                setStep(2); // Set to step 2 for output images
-                setRecognizeStatus("분석중"); // Set status to "analyzing"
-                setResultText("결과를 기다리는 중입니다..."); // Set result text
-            }
-        }, 1000 * (index + 1)); // Increment delay for each image
-    
+      // Update input and output images
+      setInputImages(data.inputImages);
+      setOutputImages(data.outputImages);
 
-      // 3단계: 3초 후 결과 출력
-      setTimeout(() => {
-        setResultImage(`http://localhost:8080/image/${data.outputImages[index].name2}`);
-
-       // recognize 값에 따라 분석 상태 업데이트
-        if (data.outputImages[index].fullnumber === inputImage.fullnumber) {
-          setResultText('번호판 일치');
-        }else {
-          setResultText('번호판 불일치');
+      // Check if it's the first message
+      if (firstMessageTime === null) {
+        setFirstMessageTime(Date.now()); // Set the first message time
+        await analyzeImages(data.inputImages, data.outputImages);
+      } else {
+        // Check if an hour has passed since the first message
+        if (Date.now() - firstMessageTime >= 3600000) { // 3600000 ms = 1 hour
+          setFirstMessageTime(Date.now()); // Update to the current time
+          await analyzeImages(data.inputImages, data.outputImages);
         }
-        setRecognizeStatus(data.outputImages[index].recognize);
-        setIsAnalyzed(true); // 분석 완료 상태 업데이트
-        setStep(3); // 결과 출력 단계로 설정
-      }, 3000); // 3초 후 결과 출력
-    });
+      }
     };
 
-    // 에러 핸들링
+    // Handle error
     socket.onerror = (error) => {
       console.error('WebSocket error:', error);
     };
 
-    // 컴포넌트가 언마운트될 때 웹소켓 연결 해제
+    // Cleanup on unmount
     return () => {
       socket.close();
     };
-  }, []);
+  }, [firstMessageTime]); // Dependency on firstMessageTime
 
-   // 배경색과 보더 색 동적으로 설정하기 위해 클래스를 결정
-   const statusClass = `${recognizeStatus === '인식성공 100' ? 'green-background' : recognizeStatus === '인식성공 50' ? 'yellow-background' : recognizeStatus === '인식불가' ? 'red-background' : ''}`;
-   const resultBoxClass = `${recognizeStatus === '인식성공 100' ? 'light-green-background' : recognizeStatus === '인식성공 50' ? 'light-yellow-background' : recognizeStatus === '인식불가' ? 'light-red-background' : ''} ${statusClass}`; // 보더 색도 같이 변경
+  const analyzeImages = async (inputImages, outputImages) => {
+    setLeftImage(inputImages[0]?.weighbridgename);
+    await new Promise(resolve => setTimeout(resolve, 5000));
+
+    for (let i = 1; i < inputImages.length; i++) {
+      setLeftImage(inputImages[i]?.weighbridgename); // 왼쪽 이미지 설정
+      setRightImage(outputImages[i - 1]?.junkyardname); // 오른쪽 이미지 설정
+      if (outputImages[i - 1]?.fullnumber === inputImages[i - 1]?.fullnumber) {
+        setFullnumber(outputImages[i - 1]?.fullnumber);
+        const filename1 = inputImages[i - 1]?.weighbridgename; // "2024-09-24_12-45-45.jpg"
+        const filename2 = outputImages[i - 1]?.junkyardname; // "2024-09-24_12-45-45.jpg"
+        setWeighbridgename(filename1.substring(0, filename1.length - 4));
+        setJunkyardname(filename2.substring(0, filename2.length - 4));
+      }
+
+      // 30초 대기
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    }
+    setRightImage(outputImages[outputImages.length-1].junkyardname); // 오른쪽 이미지 설정
+  };
 
   return (
     <div className="result-page">
-      <h2>분석 이미지 조회</h2>
+      <h2>cctv-계근장, 고철장 </h2>
       <div className="image-result">
-        {/* 왼쪽 이미지 박스 */}
         <div className="image-box">
-          {leftImage && <img src={leftImage} alt="Left Image" />}
-          <p>계근대 번호판 사진</p>
+          {leftImage ? (
+            <img 
+              src={`http://localhost:8080/image/${leftImage}`} 
+              alt="Left Image" 
+            />
+          ) : (
+            <p>계근대 번호판 사진</p>
+          )}
         </div>
-
-        {/* 오른쪽 이미지 박스 */}
         <div className="image-box">
-          {rightImage && <img src={rightImage} alt="Right Image" />}
-          <p>트럭 사진{fileName}</p>
+          {rightImage ? (
+            <img 
+              src={`http://localhost:8080/image/${rightImage}`} 
+              alt="Right Image" 
+            />
+          ) : (
+            <p>트럭 사진</p>
+          )}
         </div>
       </div>
-
-      {/* 분석 결과 폼: 항상 보여주되, 결과 내용만 단계별로 업데이트 */}
-      <div className={`result-box ${resultBoxClass}`}> {/* 클래스에 따라 배경색 및 보더 색 변경 */}
-        <p className={`status ${statusClass}`}>{step < 3 ? "분석중" : recognizeStatus}</p> {/* 3초 전까지 "분석중" 상태 */}
-        {step >= 3 && <img src={resultImage} alt="Result Image" />} {/* 3초 후 결과 이미지 출력 */}
-        <p className="result-text">{step < 3 ? "결과를 기다리는 중입니다..." : resultText}</p> {/* 결과 출력 */}
+      <div className={`result-box`}> 
+        <p className="result-text">
+          차량번호 ({fullnumber})<br />
+          계근장 입차완료 ({weighbridgename})<br />
+          고철장 입차완료 ({junkyardname})
+        </p>
       </div>
     </div>
   );
 }
 
-export default Cctv;
+export default AnalysisResult;

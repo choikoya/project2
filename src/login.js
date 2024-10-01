@@ -155,7 +155,7 @@ function LoginPage() {
       </Slider>
       <div className="overlay"></div>
       <div className="login-container">
-        <h1>작업차량 통합관리 시스템</h1>
+        <h1 className="login-title">작업차량 통합관리 시스템</h1>
         <form className="login-form" onSubmit={handleSubmit}>
           <input type="text"
             placeholder="차량 번호(예시 : 부산00가0000)"
