@@ -1,0 +1,58 @@
+.graph-wrapper {
+    background-color: #1f2d3d; /* 공통 배경색 */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 입체감 추가 */
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.chart-button {
+    background-color: #34495e;
+    color: #ecf0f1;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.chart-button:hover {
+    background-color: #3b5998;
+    transform: translateY(-2px);
+}
+
+.chart-button.active {
+    background-color: #0e6655;
+    color: white;
+    transform: scale(1.05);
+}
+
+.chart-container {
+    margin-top: 10px; /* 그래프와 버튼 간 간격 */
+}
+
+.input-box {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 10px 5px;
+    font-size: 12px;
+    outline: none;
+    background-color: #f9f9f9;
+    width: 33%;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+}
+
+.input-box:focus {
+    border-color: #0e6655;
+    /* border-color: #4bc0c0; */
+}

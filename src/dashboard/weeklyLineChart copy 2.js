@@ -39,9 +39,9 @@ const WeeklyLineChart = ({ year, month }) => {
               backgroundColor: 'rgba(127, 255, 0, 0.2)', // 형광 녹색 배경 (투명도)
               fill: true,
               tension: 0.4,
-              pointBackgroundColor: '#DA70D6', // 데이터 포인트 색상 (형광 보라색)
+              pointBackgroundColor: '#1E90FF', // 데이터 포인트 색상 (밝은 파란색)
               pointBorderColor: '#fff', // 데이터 포인트 테두리 색상
-              pointHoverBackgroundColor: '#FFD700', // 데이터 포인트 hover 시 색상 (밝은 노란색)
+              pointHoverBackgroundColor: '#00CED1', // 데이터 포인트 hover 시 색상 (청록색)
               pointHoverBorderColor: '#fff', // 데이터 포인트 hover 시 테두리 색상
             },
           ],
@@ -98,12 +98,12 @@ const WeeklyLineChart = ({ year, month }) => {
         },
       },
       tooltip: {
-        backgroundColor: '#7FFF00', // 툴팁 배경색을 밝은 노란색으로 변경
+        backgroundColor: '#00CED1', // 툴팁 배경색을 밝은 청록색으로 변경
         titleFont: { size: 14, color: '#000000' }, // 툴팁 제목 폰트 색상 (검은색으로 시인성 높임)
         bodyFont: { size: 12, color: '#000000' }, // 툴팁 본문 폰트 색상 (검은색으로 시인성 높임)
         titleColor: '#000000', // 제목 텍스트 색상 (검은색)
         bodyColor: '#000000', // 본문 텍스트 색상 (검은색)
-        borderColor: '#DA70D6', // 툴팁 테두리를 형광 보라색으로 설정
+        borderColor: '#1E90FF', // 툴팁 테두리를 밝은 파란색으로 설정
         borderWidth: 2, // 툴팁 테두리 두께
         cornerRadius: 5, // 툴팁 모서리를 둥글게
         padding: 10, // 툴팁 내부 여백

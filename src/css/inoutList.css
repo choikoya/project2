@@ -1,0 +1,101 @@
+/* 전체적으로 사용할 폰트 */
+body {
+    font-family: 'Helvetica Neue', 'Arial', sans-serif; /* 깔끔하고 전문가다운 폰트 */
+    background-color: #f4f4f9; /* 배경색을 중성 톤으로 설정 */
+    color: #333;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* 입출차 리스트 컨테이너 */
+  .inout-list-container {
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* 그림자로 입체감 부여 */
+    max-width: 1200px;
+    margin: auto;
+    font-size: 14px; /* 폰트 크기 더 작게 */
+  }
+  
+  /* 공지사항 제목 */
+  .inout-list-container h2 {
+    font-size: 22px; /* 좀 더 작게 조정 */
+    margin-bottom: 20px;
+    color: #333; /* 중성적인 색상 */
+    text-align: center;
+    letter-spacing: 1px; /* 글자 간격 추가 */
+    font-weight: 600; /* 약간 두꺼운 폰트 */
+  }
+  
+  /* 스크롤 가능한 테이블 래퍼 */
+  .table-wrapper {
+    max-height: 500px; /* 원하는 높이로 조절 가능 */
+    overflow-y: auto; /* 세로 스크롤 활성화 */
+    border: 1px solid #ccc;
+    border-radius: 10px;
+  }
+  
+  /* 테이블 스타일 */
+  .inout-table {
+    width: 100%;
+    border-collapse: collapse; /* 경계선을 없앰 */
+    background-color: #fafafa; /* 부드러운 배경색 */
+    border-radius: 10px; /* 모서리를 둥글게 */
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* 가벼운 그림자 */
+  }
+  
+  .inout-table th, .inout-table td {
+    padding: 12px 15px;
+    font-size: 12px; /* 폰트를 작게 하여 더 깔끔하게 */
+    color: #555; /* 텍스트 색상 어둡게 */
+    text-align: left; /* 텍스트 왼쪽 정렬 */
+  }
+  
+  .inout-table th {
+    background-color: #007bff; /* 파란색 헤더 */
+    color: white;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase; /* 대문자로 */
+    padding: 15px; /* 패딩 추가 */
+    border-bottom: 2px solid #0056b3; /* 구분선만 적용 */
+  }
+  
+  .inout-table tbody tr {
+    border-bottom: 1px solid #e9ecef; /* 각 행 사이에 구분선 */
+    transition: background-color 0.3s ease;
+  }
+  
+  .inout-table tbody tr:hover {
+    background-color: #f1f3f5; /* 호버 시 배경색 */
+  }
+  
+  .inout-table td {
+    border: none; /* 테두리 제거 */
+    font-weight: 400; /* 얇은 폰트 */
+  }
+  
+  /* 차량번호 컬럼 스타일 */
+  .inout-table td.vehicle-number {
+    color: #007bff;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none; /* 밑줄 제거 */
+    transition: color 0.2s ease;
+  }
+  
+  .inout-table td.vehicle-number:hover {
+    color: #0056b3; /* 호버 시 색상 변경 */
+  }
+  
+  /* 데이터가 없을 때 */
+  .table-no-data {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+    color: #999;
+  }
+  

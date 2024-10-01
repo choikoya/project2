@@ -74,7 +74,7 @@ function Notice({ hideControls = false }) {
 
   return (
     <div className="notice-page">
-      <h2>공지사항</h2>
+      <h2>게시판</h2>
       {!hideControls && (
         <button className="register-button" onClick={() => navigate('/write')}>
           등록

@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import YearlyLineChart from './yearlyLineChart';
 import MonthlyLineChart from './monthlyLineChart';
 import WeeklyLineChart from './weeklyLineChart';
-// import DailyLineChart from './dailyLineChart'; // 주석 처리
-import '../css/chartStyle.css'; // CSS 파일 추가
+import DailyLineChart from './dailyLineChart';
+import '../css/chartStyles.css'; // CSS 파일 추가
 
 function Graph() {
   const [year, setYear] = useState('2024');
   const [month, setMonth] = useState('1');
+  const [day, setDay] = useState('1');
   const [activeChart, setActiveChart] = useState('yearly'); // 활성화된 차트
 
   return (
-    <div className="graph-wrapper"> {/* 버튼과 그래프를 감싸는 상위 컨테이너 */}
-      
+    <div className="graph-container">
       {/* 버튼들 */}
       <div className="button-container">
         <button className={`chart-button ${activeChart === 'yearly' ? 'active' : ''}`} onClick={() => setActiveChart('yearly')}>
@@ -24,17 +24,12 @@ function Graph() {
         <button className={`chart-button ${activeChart === 'weekly' ? 'active' : ''}`} onClick={() => setActiveChart('weekly')}>
           주간
         </button>
-        {/* 일일 차트 부분 주석 처리 */}
-        {/* 
-        <button className={`chart-button ${activeChart === 'daily' ? 'active' : ''}`} onClick={() => setActiveChart('daily')}>
-          일일
-        </button>
-        */}
+        
       </div>
 
       {/* 연간 차트 */}
       {activeChart === 'yearly' && (
-        <div className="chart-container">
+        <div>
           <input
             type="number"
             className="input-box"
@@ -48,7 +43,7 @@ function Graph() {
 
       {/* 월간 차트 */}
       {activeChart === 'monthly' && (
-        <div className="chart-container">
+        <div>
           <input
             type="number"
             className="input-box"
@@ -62,7 +57,7 @@ function Graph() {
 
       {/* 주간 차트 */}
       {activeChart === 'weekly' && (
-        <div className="chart-container">
+        <div>
           <input
             type="number"
             className="input-box"
@@ -81,6 +76,33 @@ function Graph() {
         </div>
       )}
 
+      {/* 일일 차트 */}
+      {activeChart === 'daily' && (
+        <div className="graph-item">
+          <input
+            type="number"
+            className="input-box"
+            placeholder="년 입력"
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+          />
+          <input
+            type="number"
+            className="input-box"
+            placeholder="월 입력"
+            value={month}
+            onChange={(e) => setMonth(e.target.value)}
+          />
+          <input
+            type="number"
+            className="input-box"
+            placeholder="일 입력"
+            value={day}
+            onChange={(e) => setDay(e.target.value)}
+          />
+          <DailyLineChart year={year} month={month} day={day} />
+        </div>
+      )}
     </div>
   );
 }

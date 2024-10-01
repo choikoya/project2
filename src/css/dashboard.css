@@ -1,77 +1,79 @@
 /* 대시보드 레이아웃 */
 .dashboard {
-    margin: 20px;
-  }
-  
-  .entry-list {
-    margin-bottom: 30px;
-  }
-  
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .data-table th, .data-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  
-  .data-table th {
-    background-color: #f2f2f2;
-  }
-  
+  margin: 20px;
+}
+
+.entry-list {
+  margin-bottom: 30px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th, .data-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.data-table th {
+  background-color: #f2f2f2;
+}
+
 /* Flexbox로 레이아웃 구성 */
 
-  .flex-item {
-    background-color: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    flex: 1 1 45%; /* 기본적으로 45% 크기 차지 */
-    min-width: 300px; /* 최소 너비 */
-  }
-  
-  .small-chart {
-    /* max-width: 300px; */
-    margin: 0 auto;
-    flex: 1 1 20%; /* 작은 크기로 설정 */
-    text-align: center;
-    
-  }
-  
-  .notice-board {
-   
-    flex: 1 1 75%; /* 나머지 공간을 차지하도록 */
-    
-  }
-  
-  .notice-list {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .notice-list li {
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .notice-list span {
-    font-size: 0.9em;
-    color: gray;
-  }
+.flex-item {
+  background-color: white;
+  padding: 10px; /* 기존의 20px에서 10px로 줄임 */
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  flex: 1 1 45%; /* 기본적으로 45% 크기 차지 */
+  min-width: 300px; /* 최소 너비 */
+}
 
+
+  .graph-wrapper {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.7); /* 진하고 가까이 있는 그림자 */
+    border-radius: 5px; /* 테두리 모서리를 부드럽게 */
+  }
+  
+
+
+.small-chart {
+  margin: 0 auto;
+  flex: 1 1 20%; /* 작은 크기로 설정 */
+  text-align: center;
+}
+
+.notice-board {
+  flex: 1 1 75%; /* 나머지 공간을 차지하도록 */
+}
+
+.notice-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.notice-list li {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.notice-list span {
+  font-size: 0.9em;
+  color: gray;
+}
 
 /* Flexbox로 레이아웃 구성 */
 .flex-container {
   display: flex;
   flex-wrap: wrap; /* 화면 크기에 따라 줄 바꿈 허용 */
-  gap: 20px; /* 요소 사이 간격 */
+  gap: 10px; /* 요소 사이 간격을 줄여서 1/3로 변경 */
   justify-content: space-between; /* 요소를 좌우로 정렬 */
 }
-
 
 .doughnut-container {
   margin-top: 20px;
@@ -84,16 +86,19 @@
   margin: 0 auto; /* 가운데 정렬 */
 }
 
+/* InoutList 아래쪽에 20px 여백 추가 */
+.entry-list-container {
+  margin-bottom: 20px;
+}
 
-/* dashboard.css */
 .entry-list-container.blur {
   filter: blur(5px); /* 흐림 효과 */
   pointer-events: none; /* 클릭 방지 */
 }
+
 /* VehicleTypeDoughnut의 크기를 조정하는 CSS */
 .vehicle-type-doughnut-container {
   max-width: 50px; /* 도넛 차트의 최대 너비 */
-
   margin: 0 auto; /* 가운데 정렬 */
   padding: 20px; /* 적절한 패딩 추가 */
 }
