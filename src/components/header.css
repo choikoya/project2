@@ -145,12 +145,12 @@
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 8px rgba(72, 219, 251, 0.3); /* 버튼에 그림자 추가 */
+  box-shadow: 0 4px 8px rgba(72, 219, 251, 0.1); /* 버튼에 그림자 추가 */
 }
 
 .logout-button:hover {
   background-color: #38a8c2;
-  box-shadow: 0 6px 12px rgba(72, 219, 251, 0.5); /* 더 깊은 그림자 */
+  box-shadow: 0 6px 12px rgba(72, 219, 251, 0.1); /* 더 깊은 그림자 */
 }
 
 /* 메인 콘텐츠 스타일 */

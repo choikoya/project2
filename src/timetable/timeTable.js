@@ -75,8 +75,9 @@ const sortImages2 = (images, key) => {
 
 const TimeTable = () => {
 
-  
-  
+  const [processedDataIds, setProcessedDataIds] = useState(new Set()); // 이미 처리된 데이터의 ID를 저장할 Set
+  const [lastMessageTime, setLastMessageTime] = useState(null); // 마지막 메시지를 받은 시간
+
   const [startDate, setStartDate] = useState(null);
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [endDate, setEndDate] = useState(null);
@@ -105,6 +106,7 @@ const TimeTable = () => {
 
   const [todayData, setTodayData ] =useState(false);  //하나씩 슬라이싱을 하기 위한 
 
+  const indexRef = useRef(0); // 컴포넌트 최상단에 선언
 
 // 기존 데이터 설정하지 않고 한줄씩 추가하는 로직에서 데이터만 추가하는 식으로 수정
 const handleUserFetch = async () => {
@@ -186,45 +188,72 @@ const handleSearch = () => {
 
 
 // 데이터를 한 줄씩 추가하는 로직 (한 번에 모든 데이터가 출력되지 않도록)
+// 데이터를 한 줄씩 추가하는 로직 (중복 체크를 강화)
+// 한 줄씩 데이터를 추가하는 로직 (중복 체크를 강화)
 const fetchDataWithIncrementalLoad = (sortedMergedImages) => {
-  let index = 0;
-  const interval = 2500; // 2초
-  let lastTime = Date.now(); // 마지막 실행 시간을 기록
+  const interval = 5000; // 5초로 설정
 
   const intervalId = setInterval(() => {
-    const currentTime = Date.now(); 
-    const elapsedTime = currentTime - lastTime; // 경과 시간 계산
+    const index = indexRef.current; // useRef로 인덱스 값 참조
 
-    if (elapsedTime >= interval) {
-      if (index < sortedMergedImages.length) {
-        setFilteredData((prevData) => [...prevData, sortedMergedImages[index]]);
-        index++; // 다음 데이터를 위해 인덱스 증가
-        lastTime = currentTime; // 마지막 실행 시간을 갱신
+    if (index < sortedMergedImages.length) {
+      const newImage = sortedMergedImages[index];
+
+      // 고유한 식별자를 지정 (번호판 이름이나 ID 등)
+      const imageId = newImage.id || newImage.numberplatename || newImage.weighbridgename || newImage.junkyardname;
+
+      // 중복된 데이터인지 확인 (Set에 고유한 식별자 저장)
+      if (!processedDataIds.has(imageId)) {
+        setFilteredData((prevData) => {
+          const updatedData = [...prevData, newImage]
+            .filter((item, pos, self) => self.findIndex(v => v.id === item.id) === pos) // 중복 제거
+            .sort((a, b) => parseDateFromName(a.weighbridgename) - parseDateFromName(b.weighbridgename));
+          return updatedData;
+        });
+        setProcessedDataIds((prevIds) => new Set(prevIds).add(imageId)); // 처리된 데이터 기록
       } else {
-        clearInterval(intervalId); // 모든 데이터가 출력되면 인터벌 종료
+        console.log(`중복된 데이터 건너뜀: ${imageId}`);
       }
+
+      indexRef.current += 1; // 다음 데이터를 처리할 때 인덱스 증가
+    } else {
+      clearInterval(intervalId); // 모든 데이터를 처리한 경우 인터벌 중지
     }
-  }, 100); // 0.1초마다 체크하여 정확성을 높임
+  }, interval); // interval 값에 따라 실행
 };
+
+
+
+
+let lastReceivedData = null; // 마지막으로 받은 데이터를 저장할 변수
 
 
 // 데이터를 가져오는 함수 수정
+// 데이터를 가져오는 함수 수정
 const fetchData = async () => {
   const socket = new WebSocket(WS_URL);
-  socket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    const sortedInputImages = sortImages(data.inputImages, 'weighbridgename');
-    const sortedOutputImages = sortImages(data.outputImages, 'junkyardname');
-    const mergedImages = [...sortedInputImages, ...sortedOutputImages];
-    const sortedMergedImages = sortImages2(mergedImages);
 
-    // 한 줄씩 데이터를 추가하는 함수 호출
-    fetchDataWithIncrementalLoad(sortedMergedImages);
+  // 데이터를 가져오는 함수에서 마지막 처리 시간을 체크하여, 1시간 반 간격으로만 데이터를 처리
+  socket.onmessage = (event) => {
+    if (!lastMessageTime || (Date.now() - lastMessageTime >= 5400000)) { // 1시간 반 = 5400000ms
+      const data = JSON.parse(event.data);
+
+      const sortedInputImages = sortImages(data.inputImages, 'weighbridgename');
+      const sortedOutputImages = sortImages(data.outputImages, 'junkyardname');
+      const mergedImages = [...sortedInputImages, ...sortedOutputImages];
+      const sortedMergedImages = sortImages2(mergedImages);
+
+      fetchDataWithIncrementalLoad(sortedMergedImages); // 데이터를 처리하는 로직
+      setLastMessageTime(Date.now()); // 마지막 처리 시간을 현재 시간으로 갱신
+    }
   };
 
   socket.onerror = (error) => console.error("WebSocket error: ", error);
+
   return () => socket.close();
 };
+
+
 
 // useEffect 수정: 페이지가 처음 열릴 때 데이터 로드
 useEffect(() => {

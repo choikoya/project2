@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import './header.css'; // 헤더에 대한 별도 CSS
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope } from '@fortawesome/free-regular-svg-icons'; // 'Envelope' 아이콘 import
-import { faTimes, faChevronLeft } from '@fortawesome/free-solid-svg-icons'; // 'Times'와 왼쪽 화살표 아이콘 import
+import { faTimes, faChevronLeft, faBullhorn, faTachometerAlt, faChartBar, faCar } from '@fortawesome/free-solid-svg-icons'; // 필요한 아이콘 import
 import Modal from 'react-modal'; // react-modal 라이브러리 import
 import MessageBox from '../timetable/messageBox'; // 쪽지함 컴포넌트 import
 
@@ -61,10 +61,30 @@ function Header() {
       </div>
       <nav className="sidebar-nav">
         <ul className="nav-list">
-          <li><Link to="/notice">공지사항</Link></li>
-          <li><Link to="/dashboard">대시보드</Link></li>
-          <li><Link to="/result">모니터링</Link></li>
-          <li><Link to="/timetable">입출차 조회</Link></li>
+          <li>
+            <Link to="/notice">
+              <FontAwesomeIcon icon={faBullhorn} style={{ marginRight: '10px' }} /> {/* 공지사항 아이콘 추가 */}
+              공지사항
+            </Link>
+          </li>
+          <li>
+            <Link to="/dashboard">
+              <FontAwesomeIcon icon={faTachometerAlt} style={{ marginRight: '10px' }} /> {/* 대시보드 아이콘 추가 */}
+              대시보드
+            </Link>
+          </li>
+          <li>
+            <Link to="/result">
+              <FontAwesomeIcon icon={faChartBar} style={{ marginRight: '10px' }} /> {/* 모니터링 아이콘 추가 */}
+              모니터링
+            </Link>
+          </li>
+          <li>
+            <Link to="/timetable">
+              <FontAwesomeIcon icon={faCar} style={{ marginRight: '10px' }} /> {/* 입출차 조회 아이콘 추가 */}
+              입출차 조회
+            </Link>
+          </li>
         </ul>
       </nav>
 
@@ -73,13 +93,12 @@ function Header() {
           <span><Link to="/adminPage">관리자 페이지</Link></span>
         )}
 
-{userRole === 'ROLE_MEMBER' && (
-
-        <button className="message-icon" onClick={openMessageModal}>
-          <FontAwesomeIcon icon={faEnvelope} />
-          <span className="new-message-badge">3</span> {/* 새쪽지 예시 */}
-        </button>
-)}
+        {userRole === 'ROLE_MEMBER' && (
+          <button className="message-icon" onClick={openMessageModal}>
+            <FontAwesomeIcon icon={faEnvelope} />
+            <span className="new-message-badge">3</span> {/* 새쪽지 예시 */}
+          </button>
+        )}
 
         {isLoggedIn ? (
           <span className="logout-button" onClick={handleLogout}>로그아웃</span>

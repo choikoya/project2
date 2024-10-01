@@ -71,8 +71,8 @@ h1 {
   font-size: 22px; /* 크기를 조정하여 더 세련된 느낌 */
   color: #343a40;
   margin-bottom: 20px;
-  border-bottom: 1px solid white; /* 어두운 파란색 구분선 */
-  padding-bottom: 5px;
+  /* border-bottom: 1px solid white; 어두운 파란색 구분선 */
+  /* padding-bottom: 5px; */
 }
 
 .login-form {

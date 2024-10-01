@@ -41,7 +41,7 @@ function NoticeDetail() {
           setNotice(data);
       } else {
           console.error('Failed to fetch notice:', response.status);
-          alert('해당 공지사항을 찾을 수 없습니다.(작성자만 열람가능)');
+          alert('해당 게시글을 찾을 수 없습니다.(작성자만 열람가능)');
           navigate('/notice');
       }
   } catch (error) {
@@ -65,7 +65,7 @@ const fetchNoticeDetailReply = async () => {
       setReply(data); // Save replies to state
       console.log(data); // Log the received data
     } else {
-      alert('해당 공지사항의 댓글을 찾을 수 없습니다.');
+      alert('해당 게시글의 댓글을 찾을 수 없습니다.');
       navigate('/notice'); // Navigate if replies are not found
     }
   } catch (error) {
@@ -104,7 +104,7 @@ const fetchNoticeDetailReply = async () => {
         navigate('/notice'); // 공지사항을 찾을 수 없으면 공지사항 페이지로 이동
       } 
       else if (response.status==403){
-        alert('작성자만 삭제 권한 가집니다.');
+        alert('작성자만 삭제 권한 있음');
         navigate('/notice');
       }
     }

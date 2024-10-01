@@ -10,6 +10,7 @@
   margin-top: 50px; /* 컨텐츠와 푸터 사이에 50px 띄움 */
   font-family: Arial, sans-serif;
   box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.3); /* 섬세한 그림자 효과로 깊이감 추가 */
+  font-size: 12px; /* 폰트 크기 더 작게 조정 */
 }
 
 /* 푸터 내용 정렬 및 배치 */
@@ -49,12 +50,14 @@
 
 .footer-team ul li {
   margin: 5px 0;
+  font-size: 12px; /* 리스트 항목의 폰트 크기 더 작게 조정 */
 }
 
 .footer-team ul li a {
   color: #a6e3e9; /* 텍스트 링크 색상 */
   text-decoration: none;
   transition: color 0.3s ease; /* 부드러운 색상 전환 */
+  font-size: 12px; /* 링크 텍스트 폰트 크기 작게 */
 }
 
 .footer-team ul li a:hover {
@@ -65,19 +68,26 @@
 .footer-contact p {
   margin: 5px 0;
   color: #d3e0ea; /* 기본 텍스트 색상 밝은 푸른계열로 조정 */
+  font-size: 12px; /* 연락처 텍스트 크기 더 작게 조정 */
+}
+
+/* 이메일 스타일 */
+.footer-contact .email {
+  color: #888; /* 이메일 색상을 회색으로 변경 */
+  font-size: 12px; /* 이메일 폰트 크기 더 작게 설정 */
 }
 
 /* 푸터 하단 섹션 */
 .footer-bottom {
   margin-top: 20px;
   padding-top: 10px;
-  font-size: 14px;
+  font-size: 12px; /* 푸터 하단 폰트 크기 더 작게 설정 */
   color: #aaa;
 }
 
 .footer-bottom p {
   margin: 0;
-  font-size: 12px;
+  font-size: 12px; /* 푸터 하단의 작은 텍스트 색상 및 크기 조정 */
   color: rgba(240, 238, 238, 0.7); /* 푸터 하단의 작은 텍스트 색상 조정 */
   letter-spacing: 0.5px; /* 고급스러운 텍스트 간격 */
 }
