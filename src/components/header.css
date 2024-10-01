@@ -1,26 +1,172 @@
-.header {
+/* 전체 레이아웃 */
+.layout {
   display: flex;
-  justify-content: space-between;
-  background-color: #013220;
-  padding: 20px;
-  color: white;
+  min-height: 100vh;
 }
 
+/* 사이드바 스타일 (고급스러운 그라데이션 배경, 푸른계열) */
+.sidebar {
+  width: 60px; /* 기본 상태에서 사이드바가 축소됨 */
+  height: 100vh;
+  background: linear-gradient(145deg, #1c1f24, #0a3d62); /* 그라데이션 배경 */
+  color: #d3e0ea; /* 밝은 푸른계열 텍스트 */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 10px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition: width 0.3s ease, box-shadow 0.3s ease; /* 확장 및 그림자 애니메이션 */
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2); /* 섬세한 그림자 */
+}
+
+/* 사이드바 확장 시 */
+.sidebar:hover {
+  width: 240px; /* 확장 시 폭 */
+  padding: 20px;
+  box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3); /* 확장 시 더 깊은 그림자 */
+}
+
+/* 사이드바 상단 화살표/손가락 모양 추가 */
+.sidebar .sidebar-toggle-icon {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 24px;
+  color: #d3e0ea;
+  cursor: pointer;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.sidebar:hover .sidebar-toggle-icon {
+  opacity: 0; /* 사이드바 확장 시 화살표가 사라짐 */
+}
+
+/* 사이드바 헤더 스타일 */
+.sidebar-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.sidebar-header h1 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 1.2px; /* 텍스트 간격 조정으로 고급스러운 느낌 */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sidebar:hover .sidebar-header h1 {
+  opacity: 1;
+}
+
+/* 네비게이션 메뉴 스타일 */
 .nav-list {
   list-style: none;
-  display: flex;
-  gap: 20px;
+  padding: 0;
+  transition: opacity 0.3s ease;
+  opacity: 0;
 }
 
+.sidebar:hover .nav-list {
+  opacity: 1;
+}
+
+.nav-list li {
+  margin: 20px 0;
+}
+
+.nav-list li a {
+  color: #d3e0ea;
+  font-size: 16px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease; /* 추가 애니메이션 */
+}
+
+.nav-list li a:hover {
+  background-color: #27496d;
+  color: #ffffff;
+  border-radius: 8px;
+  transform: translateX(5px); /* 살짝 오른쪽으로 이동 */
+}
+
+/* 관리자 섹션 스타일 */
 .admin-section {
   display: flex;
+  flex-direction: column;
   gap: 20px;
+  align-items: center;
+  transition: opacity 0.3s ease;
+  opacity: 0;
 }
 
+.sidebar:hover .admin-section {
+  opacity: 1;
+}
+
+/* 메시지 아이콘 스타일 */
+.message-icon {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: #d3e0ea;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.message-icon:hover {
+  color: #ffffff;
+  transform: scale(1.1); /* 살짝 커지는 효과 */
+}
+
+.new-message-badge {
+  background-color: #48dbfb;
+  color: white;
+  font-size: 12px;
+  padding: 2px 5px;
+  border-radius: 50%;
+  margin-left: 5px;
+}
+
+/* 로그아웃 버튼 스타일 */
 .logout-button {
-  cursor: pointer; /* 로그아웃에 손 모양 커서 */
+  background-color: #48dbfb;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 8px rgba(72, 219, 251, 0.3); /* 버튼에 그림자 추가 */
 }
 
+.logout-button:hover {
+  background-color: #38a8c2;
+  box-shadow: 0 6px 12px rgba(72, 219, 251, 0.5); /* 더 깊은 그림자 */
+}
+
+/* 메인 콘텐츠 스타일 */
+.content {
+  margin-left: 60px; /* 기본 사이드바의 폭에 맞춰 마진 조정 */
+  padding: 20px;
+  background-color: #f4f5f7;
+  min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar:hover ~ .content {
+  margin-left: 240px;
+}
+
+/* 모달 스타일 */
 .modal-header {
   display: flex;
   justify-content: space-between;
@@ -28,34 +174,18 @@
   padding: 10px;
 }
 
-.close-button {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-}
-
-.close-button:hover {
-  color: red;
-}
-
-.message-icon {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
 .custom-close-button {
-  background: none; /* 배경 없앰 */
-  border: none; /* 테두리 없앰 */
-  cursor: pointer; /* 커서 변경 */
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 1.5rem; /* X 아이콘 크기 */
-  color: #333; /* X 아이콘 색상 */
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333;
 }
 
 .custom-close-button:hover {
-  color: #ff0000; /* X 아이콘을 호버할 때 색상 변경 */
+  color: #ff0000;
+}
+
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.7);
 }

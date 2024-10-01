@@ -1,6 +1,7 @@
 import React from 'react';
 import './css/App.css';
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom';
+import TopHeader from './components/topHeader';
 import Header from './components/header'; // 헤더 컴포넌트
 import Footer from './components/footer'; // 푸터 컴포넌트
 import LoginPage from './login';
@@ -24,7 +25,9 @@ function Layout({ children }) {
 
   return (
     <div className="app-container">
+      <TopHeader />
       {/* 로그인 페이지가 아닌 경우에만 헤더를 렌더링 */}
+      
       {!isLoginPage && <Header />}
       <main className="main-content">{children}</main>
       {/* 로그인 페이지가 아닌 경우에만 푸터를 렌더링 */}

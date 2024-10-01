@@ -1,12 +1,35 @@
+/* 전체적으로 사용할 폰트 */
+body {
+  font-family: 'Helvetica Neue', 'Arial', sans-serif; /* 깔끔하고 전문가다운 폰트 */
+  background-color: #f4f4f9; /* 배경색을 중성 톤으로 설정 */
+  color: #333;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 테이블 컨테이너 */
 .time-table-container {
-  padding: 20px;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* 그림자로 입체감 부여 */
+  max-width: 1200px;
+  margin: auto;
+  font-size: 14px; /* 폰트 크기 더 작게 */
 }
 
+/* 공지사항 제목 */
 h2 {
-  font-size: 18px;
+  font-size: 22px; /* 좀 더 작게 조정 */
   margin-bottom: 20px;
+  color: #333; /* 중성적인 색상 */
+  text-align: center;
+  letter-spacing: 1px; /* 글자 간격 추가 */
+  font-weight: 600; /* 약간 두꺼운 폰트 */
 }
 
+/* 검색 및 필터 스타일 */
 .search-controls {
   display: flex;
   justify-content: space-between;
@@ -14,174 +37,168 @@ h2 {
   margin-bottom: 20px;
 }
 
-.filters {
-  display: flex;
-  gap: 10px;
-}
-
-.datepicker-container {
-  display: flex;
-  gap: 10px;
-}
-
-.search-input {
+.filters input, .datepicker-container input {
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 200px;
+  border: 1px solid #ccc; /* 경계선을 줄임 */
+  border-radius: 4px;
+  font-size: 14px; /* 폰트 크기 줄임 */
 }
 
 .search-button {
-  background-color: #4CAF50;
+  background-color: #007bff;
   color: white;
   border: none;
   padding: 10px 20px;
-  margin-left: 10px;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s;
 }
 
 .search-button:hover {
-  background-color: #45a070;
+  background-color: #0056b3;
 }
 
+/* 테이블 스타일 */
 .timeTable-table {
   width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
+  border-collapse: collapse; /* 경계선을 없앰 */
+  background-color: #fafafa; /* 부드러운 배경색 */
+  border-radius: 10px; /* 모서리를 둥글게 */
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* 가벼운 그림자 */
 }
 
 .timeTable-table th, .timeTable-table td {
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: center;
+  padding: 12px 15px;
+  font-size: 12px; /* 폰트를 작게 하여 더 깔끔하게 */
+  color: #555; /* 텍스트 색상 어둡게 */
+  text-align: left; /* 텍스트 왼쪽 정렬 */
 }
 
 .timeTable-table th {
-  background-color: #f2f2f2;
+  background-color: #007bff; /* 파란색 헤더 */
+  color: white;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase; /* 대문자로 */
+  padding: 15px; /* 패딩 추가 */
+  border-bottom: 2px solid #0056b3; /* 구분선만 적용 */
 }
 
+.timeTable-table tbody tr {
+  border-bottom: 1px solid #e9ecef; /* 각 행 사이에 구분선 */
+  transition: background-color 0.3s ease;
+}
+
+.timeTable-table tbody tr:hover {
+  background-color: #f1f3f5; /* 호버 시 배경색 */
+}
+
+.timeTable-table td {
+  border: none; /* 테두리 제거 */
+  font-weight: 400; /* 얇은 폰트 */
+}
+
+/* 차량번호 컬럼 스타일 */
+.timeTable-table td.vehicle-number {
+  color: #007bff;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none; /* 밑줄 제거 */
+  transition: color 0.2s ease;
+}
+
+.timeTable-table td.vehicle-number:hover {
+  color: #0056b3; /* 호버 시 색상 변경 */
+}
+
+/* 메시지 아이콘 버튼 */
+.timeTable-table td.message-icon button {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 16px; /* 아이콘 크기를 줄임 */
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.timeTable-table td.message-icon button:hover {
+  color: #0056b3;
+}
+
+/* 데이터가 없을 때 */
 .table-no-data {
   text-align: center;
   padding: 20px;
+  font-style: italic;
+  color: #999;
 }
 
-
-
-/* Modal styles */
+/* 모달 스타일 */
 .modal {
-position: absolute;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-background: white;
-padding: 20px;
-border-radius: 10px;
-width: 400px;
-max-width: 90%;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
 }
 
 .modal-overlay {
-position: fixed;
-top: 0;
-left: 0;
-right: 0;
-bottom: 0;
-background: rgba(0, 0, 0, 0.5);
-}
-
-.modal form {
-display: flex;
-flex-direction: column;
-}
-
-.modal form label {
-margin-bottom: 10px;
-}
-
-.modal form input {
-padding: 8px;
-border: 1px solid #ccc;
-border-radius: 4px;
+  background: rgba(0, 0, 0, 0.5); /* 더 부드러운 오버레이 */
 }
 
 .modal form button {
-margin-top: 10px;
-padding: 10px;
-border: none;
-border-radius: 4px;
-background-color: #007bff;
-color: white;
-cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: bold;
 }
 
-.modal form button[type="button"] {
-background-color: #6c757d;
+.modal form button:hover {
+  background-color: #0056b3;
+}
+
+.modal form button.cancel-button {
+  background-color: #6c757d;
 }
 
 .pagination {
   display: flex;
-  justify-content: center; /* 가운데 정렬 */
-  margin: 20px 0; /* 위아래 여백 */
+  justify-content: center;
+  margin: 20px 0;
 }
 
 .pagination button {
-  padding: 10px 15px; /* 버튼 패딩 */
-  margin: 0 5px; /* 버튼 간격 */
-  border: 1px solid #007bff; /* 테두리 색상 */
-  background-color: #fff; /* 배경색 */
-  color: #007bff; /* 글자색 */
-  cursor: pointer; /* 커서 스타일 */
-  border-radius: 4px; /* 테두리 둥글게 */
-  transition: background-color 0.3s; /* 부드러운 효과 */
+  padding: 8px 16px;
+  margin: 0 6px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .pagination button:hover {
-  background-color: #007bff; /* 호버 시 배경색 변경 */
-  color: white; /* 호버 시 글자색 변경 */
+  background-color: #0056b3;
 }
 
 .pagination button:disabled {
-  background-color: #e0e0e0; /* 비활성화 버튼 색상 */
-  color: #a0a0a0; /* 비활성화 글자색 */
-  cursor: default; /* 비활성화 커서 스타일 */
+  background-color: #e0e0e0;
+  color: #a0a0a0;
+  cursor: default;
 }
 
-/* timeTable.css */
-.modal textarea {
-  width: 100%;
-  height: 150px;
-  padding: 10px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  resize: none;
-  margin-bottom: 20px;
-}
-
-.modal button {
-  padding: 10px 20px;
-  margin: 10px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.modal button:hover {
-  background-color: #007bff;
-  color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.modal button.cancel-button {
-  background-color: #f0f0f0;
-  color: #333;
-}
-
-.modal button.send-button {
-  background-color: #28a745;
+.pagination button.active {
+  background-color: #0056b3;
   color: white;
 }
-

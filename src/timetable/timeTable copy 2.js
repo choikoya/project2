@@ -75,7 +75,6 @@ const TimeTable = () => {
     textDecoration: 'underline'
   };
   
-  
   const [isIncrementalLoading, setIsIncrementalLoading] = useState(true); // 처음에는 한 줄씩 출력
   const [startDate, setStartDate] = useState(null);
   const [vehicleNumber, setVehicleNumber] = useState('');
@@ -93,7 +92,6 @@ const TimeTable = () => {
   const [secondModalIsOpen, setSecondModalIsOpen] = useState(false);
   const [members, setMembers] = useState([]);
   const [formData, setFormData] = useState({
-  
 
     
     fullnumber: '',
@@ -447,3 +445,4 @@ const handleSearch = () => {
 };
 
 export default TimeTable;
+

@@ -1,0 +1,64 @@
+.footer {
+  
+  text-align: center;
+  padding: 20px;
+  background-color: #013220;
+  color: rgba(240, 238, 238, 0.74);
+  position: relative;
+  width: 100%;
+  bottom: 0;
+  font-family: Arial, sans-serif;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between; /* 팀 멤버와 연락처 정보를 양쪽에 배치 */
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 10px;
+}
+
+.footer-team, .footer-contact {
+  text-align: left;
+}
+
+.footer-team h3, .footer-contact h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #ffeb3b;
+}
+
+.footer-team ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.footer-team ul li {
+  margin: 5px 0;
+}
+
+.footer-team ul li a {
+  color: #a6e3e9;
+  text-decoration: none;
+}
+
+.footer-team ul li a:hover {
+  color: #ffeb3b;
+}
+
+.footer-contact p {
+  margin: 5px 0;
+}
+
+.footer-bottom {
+  margin-top: 10px;
+  border-top: 1px solid #555;
+  padding-top: 10px;
+  font-size: 14px;
+  color: #aaa;
+}
+
+.footer-bottom p {
+  margin: 0;
+}
