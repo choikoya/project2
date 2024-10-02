@@ -1,6 +1,7 @@
 .result-page {
     padding: 20px;
-    margin: 0 auto;
+    max-width: 1600px;
+    margin: 80px auto;
     font-family: Arial, sans-serif;
 }
 

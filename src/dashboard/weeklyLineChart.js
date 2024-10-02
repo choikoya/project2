@@ -26,7 +26,7 @@ const WeeklyLineChart = ({ year, month }) => {
         const data = await response.json();
 
         // 데이터를 가공
-        const labels = Array.from({ length: Object.keys(data[0]).length }, (_, i) => `${i + 1}주`);
+        const labels = Array.from({ length: Object.keys(data[0]).length }, (_, i) => `${i + 1} - ${i + 2}주`);
         const dataValues = Object.values(data[0]).map(value => Number(value));
 
         setChartData({
@@ -36,6 +36,7 @@ const WeeklyLineChart = ({ year, month }) => {
               label: '주간 출입 차량 통계',
               data: dataValues,
               borderColor: '#7FFF00', // 밝은 형광 녹색 선
+              borderWidth: 3, // 선 두께
               backgroundColor: 'rgba(127, 255, 0, 0.2)', // 형광 녹색 배경 (투명도)
               fill: true,
               tension: 0.4,

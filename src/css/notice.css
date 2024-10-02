@@ -5,7 +5,7 @@
   padding: 30px;
   background-color: #f4f4f9; /* 관리용 대시보드에 어울리는 배경색 */
   max-width: 1200px; /* 페이지의 최대 너비 설정 */
-  margin: 30px auto; /* 가운데 정렬 */
+  margin: 80px auto; /* 가운데 정렬 */
   border-radius: 10px; /* 페이지 컨테이너의 둥근 모서리 */
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* 페이지 그림자 */
 }

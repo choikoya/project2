@@ -10,12 +10,13 @@ body {
 
 /* 테이블 컨테이너 */
 .time-table-container {
+  
   padding: 30px;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* 그림자로 입체감 부여 */
   max-width: 1200px;
-  margin: auto;
+  margin: 100px auto;
   font-size: 14px; /* 폰트 크기 더 작게 */
 }
 

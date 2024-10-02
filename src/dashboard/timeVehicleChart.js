@@ -15,6 +15,7 @@ function TimeVehicleChart({ options }) {
       fill: true,
       borderWidth: 2,
       barPercentage: 0.7,
+      
     }]
   });
 
@@ -55,8 +56,8 @@ function TimeVehicleChart({ options }) {
           datasets: [{
             label: '시간별 출입 현황',
             data: filteredData,
-            borderColor: 'rgba(102, 255, 178, 1)', 
-            backgroundColor: 'rgba(102, 255, 178, 0.7)', 
+            borderColor: 'rgba(255, 255, 0, 1)', 
+            backgroundColor: 'rgba(255, 69, 0, 0.8)', 
             fill: true,
             borderWidth: 2,
             barPercentage: 0.7,
@@ -72,6 +73,8 @@ function TimeVehicleChart({ options }) {
 
   const updatedOptions = {
     ...options,
+    maintainAspectRatio: false,  // 차트 비율을 강제로 유지하지 않음
+    devicePixelRatio: 1,  // 차트 해상도를 높이기 위해 devicePixelRatio 설정
     scales: {
       x: {
         ...options.scales?.x,
@@ -79,10 +82,10 @@ function TimeVehicleChart({ options }) {
           maxRotation: 0,
           minRotation: 0,
           font: {
-            size: 14,
+            size: 12,
             family: "'Roboto', 'Helvetica Neue', 'Arial', sans-serif",
-            weight: 'bold',
-            color: '#fff',
+            
+            color: 'white  !important',
           },
         },
         grid: {
@@ -94,7 +97,7 @@ function TimeVehicleChart({ options }) {
         ticks: {
           beginAtZero: true,
           font: {
-            size: 14,
+            size: 12,
             family: "'Roboto', 'Helvetica Neue', 'Arial', sans-serif",
             color: '#fff',
           },
@@ -109,7 +112,7 @@ function TimeVehicleChart({ options }) {
         display: true,
         labels: {
           font: {
-            size: 14,
+            size: 12,
             family: "'Roboto', 'Helvetica Neue', 'Arial', sans-serif",
             weight: 'bold',
           },
@@ -117,9 +120,9 @@ function TimeVehicleChart({ options }) {
         }
       },
       tooltip: {
-        backgroundColor: 'rgba(102, 255, 178, 0.8)',
-        titleFont: { size: 14, weight: 'bold', color: '#000' },
-        bodyFont: { size: 12, color: '#000' },
+        backgroundColor: 'rgba(102, 255, 178, 0.9)',
+        titleFont: { size: 12, weight: 'bold', color: '#000' },
+        bodyFont: { size: 10, color: '#000' },
         borderColor: '#fff',
         borderWidth: 1,
         cornerRadius: 4,
@@ -128,7 +131,7 @@ function TimeVehicleChart({ options }) {
   };
 
   return (
-    <div className="graph-wrapper">
+    <div className="graph-wrapper" style={{ height: '400px' }}> {/* 차트 컨테이너 크기를 적절하게 설정 */}
       <Bar data={timeVehicleData} options={updatedOptions} />
     </div>
   );

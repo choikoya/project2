@@ -16,6 +16,7 @@ import Graph from './dashboard/graph';
 import NoticeReWrite from './notice/noticeReWrite';
 import NoticeReplyWrite from './notice/noticeReplyWrite';
 import Messages from './timetable/messageBox'
+import SignupModal from './signUpModal';
 
 function Layout({ children }) {
   const location = useLocation();
@@ -41,6 +42,8 @@ function App() {
     <BrowserRouter>
       <Layout>
         <Routes>
+          
+          <Route path='/signUp' element={<SignupModal />} />
           <Route path='/' element={<LoginPage />} />
           <Route path='/dashboard' element={<Dashboard/>}/>
           <Route path="/result" element={<AnalysisResult />} />

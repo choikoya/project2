@@ -7,7 +7,7 @@
 .main-content {
   flex: 1; /* 메인 콘텐츠가 푸터를 밀어내고 페이지 나머지를 차지 */
   width: 100%; /* 전체 폭을 차지하게 설정 */
-  padding: 80px;
+  /* padding: 80px; */
   box-sizing: border-box;
   background-color: rgb(214, 214, 214);
 }

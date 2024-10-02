@@ -47,7 +47,7 @@ const MonthlyLineChart = ({ year }) => {
               borderColor: '#00FFFF', // 형광 밝은 청록색 선
               backgroundColor: 'rgba(0, 255, 255, 0.2)', // 형광 청록색 배경 (투명도)
               fill: true, // 배경 채우기 여부
-              borderWidth: 2, // 선 두께
+              borderWidth: 3, // 선 두께
               pointBackgroundColor: '#FF69B4', // 데이터 포인트 색상 (밝은 핑크색)
               pointBorderColor: '#fff', // 데이터 포인트 테두리 색상
               pointHoverBackgroundColor: '#ADFF2F', // 데이터 포인트 hover 시 색상 (밝은 그린)

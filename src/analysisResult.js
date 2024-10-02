@@ -88,7 +88,7 @@ function AnalysisResult() {
         <div className="image-box">
           {leftImage ? (
             <img 
-              src={`http://localhost:8080/image/${leftImage}`} 
+              src={`http://192.168.0.142:8080/image/${leftImage}`} 
               alt="Left Image" 
             />
           ) : (
@@ -98,7 +98,7 @@ function AnalysisResult() {
         <div className="image-box">
           {rightImage ? (
             <img 
-              src={`http://localhost:8080/image/${rightImage}`} 
+              src={`http://192.168.0.142:8080/image/${rightImage}`} 
               alt="Right Image" 
             />
           ) : (

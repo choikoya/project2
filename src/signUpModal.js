@@ -1,72 +1,42 @@
 import React, { useState } from 'react';
-import './signUpModal.css'; // 스타일 파일 추가
+import './signUpModal.css';  // 모달 스타일을 위한 CSS 파일
 
-function SignupModal({ isOpen, onClose }) {
-  const [name, setName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [vehicleNumber, setVehicleNumber] = useState('');
+function SignupModal({ onClose, onSignup }) {
+  const [signupUsername, setSignupUsername] = useState('');
+  const [signupPassword, setSignupPassword] = useState('');
 
-  const handleSignup = async(e) => {
+  const handleSignupSubmit = (e) => {
     e.preventDefault();
-    // 회원가입 처리 로직을 여기에 추가
-    console.log('회원가입 정보:', { name, phoneNumber, vehicleNumber });
-
-    try {
-        const response = await fetch('http://192.168.0.133:8080/signup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, phoneNumber, vehicleNumber }),
-        });
-
-        if(response.ok){
-     alert('회원가입이 완료되었습니다.');
-    onClose(); // 회원가입 완료 후 모달 닫기
-  }else{
-  alert('회원가입 실패');
-}  
-}catch (error) {
-    console.error('회원가입 오류:', error);
-    alert('회원가입 중 오류가 발생했습니다.');
-  }
-};
-
-
-  if (!isOpen) 
-    return null; // 모달이 열려있지 않으면 아무것도 렌더링하지 않음
-  
+    if (signupUsername && signupPassword) {
+      onSignup(signupUsername, signupPassword);
+    } else {
+      alert('아이디와 비밀번호를 입력하세요.');
+    }
+  };
 
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay"> {/* 오버레이를 위한 클래스 적용 */}
       <div className="modal-content">
+        <span className="close" onClick={onClose}>&times;</span>
         <h2>회원가입</h2>
-        <form onSubmit={handleSignup}>
+        <form onSubmit={handleSignupSubmit}>
           <div className="form-group">
-            <label>이름</label>
             <input
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="이름(예시 : 홍길동)" // 이름 필드 플레이스홀더 추가
+              placeholder="아이디(차량번호)"
+              value={signupUsername}
+              onChange={(e) => setSignupUsername(e.target.value)}
+              className="input-field"
               required
             />
           </div>
           <div className="form-group">
-            <label>전화번호</label>
             <input
-              type="text"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder="핸드폰 번호(예시 : 01012345678)" // 핸드폰 번호 필드 플레이스홀더 추가
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>차량번호</label>
-            <input
-              type="text"
-              value={vehicleNumber}
-              onChange={(e) => setVehicleNumber(e.target.value)}
-              placeholder="차량 번호(예시 : 부산00가0000)" // 차량 번호 필드 플레이스홀더 추가
+              type="password"
+              placeholder="비밀번호(핸드폰번호)"
+              value={signupPassword}
+              onChange={(e) => setSignupPassword(e.target.value)}
+              className="input-field"
               required
             />
           </div>

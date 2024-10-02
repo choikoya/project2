@@ -5,7 +5,6 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useState, useEffect } from "react";
 import Modal from 'react-modal';  // 새쪽지 팝업을 위한 모달 추가
-import SignupModal from "./signUpModal";
 
 Modal.setAppElement('#root'); // 모달을 사용할 경우 root 엘리먼트 지정
 
@@ -18,28 +17,6 @@ function LoginPage() {
   const [hasNewMessages, setHasNewMessages] = useState(false);  // 새쪽지 여부 상태 추가
   const [isModalOpen, setIsModalOpen] = useState(false); // 새쪽지 팝업 상태 관리
   const navigate = useNavigate();
-
-  const handleSignup = async (signupUsername, signupPassword) => {
-    try {
-      const response = await fetch('http://192.168.0.142:8080/login/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username: signupUsername, password: signupPassword }),
-      });
-
-      if (response.ok) {
-        alert('회원가입 성공! 관리자의 승인 대기중입니다.');
-        setIsSignupModalOpen(false); // 회원가입 성공 시 모달 닫기
-      } else {
-        alert('회원가입 실패: 정보를 확인하세요.');
-      }
-    } catch (error) {
-      console.error('회원가입 오류:', error);
-      alert('알 수 없는 오류가 발생했습니다.');
-    }
-  };
 
   // 페이지 로드 시 로그인 상태 확인
   useEffect(() => {
@@ -200,12 +177,6 @@ function LoginPage() {
           <button className="signup-button" onClick={() => setIsSignupModalOpen(true)}>회원가입</button>
           <button className="delete-account-button" onClick={() => navigate('/delete-account')}>회원탈퇴</button>
         </div>
-
-<div>
-        {isSignupModalOpen && (
-          <SignupModal onClose={() => setIsSignupModalOpen(false)} onSignup={handleSignup} />
-        )}
-</div>
 
         {/* 새쪽지 팝업 모달 */}
         <Modal isOpen={isModalOpen} onRequestClose={closeModal}>
