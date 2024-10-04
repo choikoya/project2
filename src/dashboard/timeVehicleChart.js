@@ -23,7 +23,7 @@ function TimeVehicleChart({ options }) {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('authToken');
-        const response = await fetch('http://192.168.0.142:8080/member/graph/hours?year=2024&month=10&day=1', {
+        const response = await fetch('http://10.125.121.189:8080/member/graph/hours?year=2024&month=10&day=1', {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,

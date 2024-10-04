@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import YearlyLineChart from './yearlyLineChart';
-import MonthlyLineChart from './monthlyLineChart';
-import WeeklyLineChart from './weeklyLineChart';
-import DailyLineChart from './dailyLineChart';
+import YearlyLineChart from '../dashboard/yearlyLineChart';
+import MonthlyLineChart from '../dashboard/monthlyLineChart';
+import WeeklyLineChart from '../dashboard/weeklyLineChart';
+import DailyLineChart from '../dashboard/dailyLineChart';
 import '../css/chartStyles.css'; // CSS 파일 추가
 
 function Graph() {

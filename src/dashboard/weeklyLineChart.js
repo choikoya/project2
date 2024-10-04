@@ -11,7 +11,7 @@ const WeeklyLineChart = ({ year, month }) => {
 
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://192.168.0.142:8080/member/graph?year=${year}&month=${month}`, {
+        const response = await fetch(`http://10.125.121.189:8080/member/graph?year=${year}&month=${month}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`, // 토큰을 헤더에 포함

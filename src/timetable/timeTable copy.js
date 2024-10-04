@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import SearchControl from './searchControl';
@@ -11,7 +11,7 @@ import '../css/timeTable.css';
 import Modal from 'react-modal'; // Import react-modal
 import { BiEnvelope } from "react-icons/bi";
 
-const WS_URL = 'ws://192.168.0.142:8080/ws';
+const WS_URL = 'ws://10.125.121.189:8080/ws';
 Modal.setAppElement('#root'); // Adjust if your root element has a different ID
 
 // 날짜를 파일 이름에서 추출하여 변환하는 함수
@@ -20,7 +20,8 @@ const parseDateFromName = (name) => {
   const match = name.match(/(\d{4}-\d{2}-\d{2})_(\d{2})-(\d{2})-(\d{2})/);
   if (!match) return null;
   const [_, datePart, hours, minutes, seconds] = match;
-  return new Date(datePart + 'T' + hours + ':' + minutes + ':' + seconds);
+ 
+  return new Date(`${datePart}T${hours}:${minutes}:${seconds}`);
 };
 
 // 파일 이름에서 날짜와 시간을 추출하는 함수
@@ -40,6 +41,17 @@ function parseDateFromName2(name) {
   const date = new Date(`${datePart}T${hours}:${minutes}:${seconds}Z`);
   return date.toLocaleString('sv-SE', { timeZone: 'UTC' }).replace('T', ' ').substring(0, 19);
 }
+// 날짜와 시간을 포맷팅하는 함수
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
 
 const sortImages = (images, key) => {
   return images.sort((a, b) => {
@@ -49,36 +61,23 @@ const sortImages = (images, key) => {
   });
 };
 
+const sortImages2 = (images, key) => {
+  return images.sort((a, b) => {
+    const dateA = a.weighbridgename ? parseDateFromName(a.weighbridgename) : parseDateFromName(a.junkyardname);
+    const dateB = b.weighbridgename ? parseDateFromName(b.weighbridgename) : parseDateFromName(b.junkyardname);
+    return dateA - dateB; // Ascending order
+  });
+};
+
+
 // 파일 이름에서 날짜와 시간을 추출하는 함수
-function extractDateFromName(name) {
-  const timestampStr = name.match(/(\d{4}-\d{2}-\d{2})_(\d{2}-\d{2}-\d{2})/);
-  if (!timestampStr) return '';
-  const [_, datePart, timePart] = timestampStr;
-  const formattedTimePart = timePart.replace(/-/g, ':');
-  return `${datePart}T${formattedTimePart}`;
-}
+
 
 const TimeTable = () => {
 
-  const containerStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '5px' // Spacing between links
-  };
+  const [processedDataIds, setProcessedDataIds] = useState(new Set()); // 이미 처리된 데이터의 ID를 저장할 Set
+  const [lastMessageTime, setLastMessageTime] = useState(null); // 마지막 메시지를 받은 시간
 
-  const linkStyle = {
-    textDecoration: 'none',
-    color: '#007bff' // Adjust the color as needed
-  };
-
-  const linkHoverStyle = {
-    textDecoration: 'underline'
-
-    
-  };
-
-  const location = useLocation(); // 현재 페이지 경로를 추적
-  
   const [startDate, setStartDate] = useState(null);
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [endDate, setEndDate] = useState(null);
@@ -95,110 +94,260 @@ const TimeTable = () => {
   const [secondModalIsOpen, setSecondModalIsOpen] = useState(false);
   const [members, setMembers] = useState([]);
   const [formData, setFormData] = useState({
-
-    
     fullnumber: '',
     place: ''
   });
-
-  // 처음 화면 로드 시 오늘 날짜에 해당하는 데이터만 필터링하는 상태 추가
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [messageModalFormData,  setMessageModalFormData] = useState({
+    fullnumber: '',
+    content: ''
+  });
+  const [isFetching, setIsFetching] = useState(false);
   const [showAll, setShowAll] = useState(false); // 전체 데이터 표시 여부를 위한 상태 추가
 
-  useEffect(() => {
-    fetchData();
-    const intervalId = setInterval(fetchData, 30000);
-    return () => clearInterval(intervalId);
-  }, []);
+  const [todayData, setTodayData ] =useState(false);  //하나씩 슬라이싱을 하기 위한 
 
-  // 데이터를 가져오는 부분 (WebSocket을 통한 서버 연결)
-  const fetchData = async () => {
-    const socket = new WebSocket(WS_URL);
-    socket.onmessage = (event) => {
+  const indexRef = useRef(0); // 컴포넌트 최상단에 선언
+
+// 기존 데이터 설정하지 않고 한줄씩 추가하는 로직에서 데이터만 추가하는 식으로 수정
+const handleUserFetch = async () => {
+    try {
+        const role =localStorage.getItem('userRole');
+        let url;
+        if (role ==="ROLE_MEMBER") {url = 'http://10.125.121.189:8080/member/inout'} 
+        else if (role ==="ROLE_ADMIN")    {url = 'http://10.125.121.189:8080/admin/today_inout' ; setTodayData(true);} 
+        const token = localStorage.getItem('authToken');
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('데이터 가져오기 실패: ' + response.statusText);
+        }
+
+        const data = await response.json();
+        const sortedInputImages = sortImages(data.inputImages, 'weighbridgename');
+        const sortedOutputImages = sortImages(data.outputImages, 'junkyardname');
+        const mergedImages = [...sortedInputImages, ...sortedOutputImages];
+        const sortedMergedImages = sortImages2(mergedImages);
+        console.log(sortedMergedImages)
+         // 한 줄씩 데이터를 추가
+    fetchDataWithIncrementalLoad(sortedMergedImages); // 한 줄씩 출력
+    } catch (error) {
+        console.error('입출차 데이터 가져오기 중 오류:', error.message);
+        alert('데이터 가져오는 중 오류가 발생했습니다: ' + error.message);
+    }
+};
+
+useEffect(() => {
+  handleUserFetch();
+}, []);
+
+// Separate effect to reset current page when allData changes
+useEffect(() => {
+  if (allData.length > 0) {
+    setCurrentPage(1);
+  }
+}, [allData]);
+
+const handleSearch = () => {
+  if (startDate == null && endDate == null && vehicleNumber == null && locationFilter == null) {
+    setFilteredData(allData);
+    return;
+  }
+
+  const startDateObj = startDate ? new Date(formatDate(startDate)) : null;
+  const endDateObj = endDate ? new Date(formatDate(endDate)) : null;
+
+  if (endDateObj) {
+    endDateObj.setHours(23);
+    endDateObj.setMinutes(59);
+    endDateObj.setSeconds(59);
+  }
+
+  const filtered = allData.filter(row => {
+    const rowDate = parseDateFromName2(row.weighbridgename || row.junkyardname);
+    const rowDateObj = rowDate ? new Date(rowDate) : null;
+
+    const isDateInRange = (!startDate && !endDate) || 
+                          (!startDateObj || !rowDateObj || (rowDateObj >= startDateObj && rowDateObj <= endDateObj));
+
+    const isVehicleMatch = !vehicleNumber || (row.fullnumber && row.fullnumber.includes(vehicleNumber));
+    const isLocationMatch = !locationFilter || (row.place && row.place.includes(locationFilter));
+
+    return isDateInRange && isVehicleMatch && isLocationMatch;
+  });
+
+  setFilteredData(filtered);
+};
+
+
+
+// 데이터를 한 줄씩 추가하는 로직 (한 번에 모든 데이터가 출력되지 않도록)
+// 데이터를 한 줄씩 추가하는 로직 (중복 체크를 강화)
+// 한 줄씩 데이터를 추가하는 로직 (중복 체크를 강화)
+const fetchDataWithIncrementalLoad = (sortedMergedImages) => {
+  const interval = 5000; // 5초로 설정
+
+  const intervalId = setInterval(() => {
+    const index = indexRef.current; // useRef로 인덱스 값 참조
+
+    if (index < sortedMergedImages.length) {
+      const newImage = sortedMergedImages[index];
+
+      // 고유한 식별자를 지정 (번호판 이름이나 ID 등)
+      const imageId = newImage.id || newImage.numberplatename || newImage.weighbridgename || newImage.junkyardname;
+
+      // 중복된 데이터인지 확인 (Set에 고유한 식별자 저장)
+      if (!processedDataIds.has(imageId)) {
+        setFilteredData((prevData) => {
+          const updatedData = [...prevData, newImage]
+            .filter((item, pos, self) => self.findIndex(v => v.id === item.id) === pos) // 중복 제거
+            .sort((a, b) => parseDateFromName(a.weighbridgename) - parseDateFromName(b.weighbridgename));
+          return updatedData;
+        });
+        setProcessedDataIds((prevIds) => new Set(prevIds).add(imageId)); // 처리된 데이터 기록
+      } else {
+        console.log(`중복된 데이터 건너뜀: ${imageId}`);
+      }
+
+      indexRef.current += 1; // 다음 데이터를 처리할 때 인덱스 증가
+    } else {
+      clearInterval(intervalId); // 모든 데이터를 처리한 경우 인터벌 중지
+    }
+  }, interval); // interval 값에 따라 실행
+};
+
+
+
+
+let lastReceivedData = null; // 마지막으로 받은 데이터를 저장할 변수
+
+
+// 데이터를 가져오는 함수 수정
+// 데이터를 가져오는 함수 수정
+const fetchData = async () => {
+  const socket = new WebSocket(WS_URL);
+
+  // 데이터를 가져오는 함수에서 마지막 처리 시간을 체크하여, 1시간 반 간격으로만 데이터를 처리
+  socket.onmessage = (event) => {
+    if (!lastMessageTime || (Date.now() - lastMessageTime >= 5400000)) { // 1시간 반 = 5400000ms
       const data = JSON.parse(event.data);
+
       const sortedInputImages = sortImages(data.inputImages, 'weighbridgename');
       const sortedOutputImages = sortImages(data.outputImages, 'junkyardname');
       const mergedImages = [...sortedInputImages, ...sortedOutputImages];
-      // Sort the merged array based on the date
-      const sortedMergedImages = sortImages(mergedImages);
-  
-      // 전체 데이터를 업데이트
-      setAllData(sortedMergedImages);
-  
-      // 처음 로드 시 2024년 2월 1일 데이터만 필터링
-      if (isFirstLoad && !showAll) {  // 처음 로드면서 전체 버튼이 눌리지 않았을 때만 실행
-        const targetDate = '2024-02-01'; // 2024년 2월 1일
-        const filteredByDate = sortedMergedImages.filter(row => {
-          const rowDate = parseDateFromName(row.weighbridgename || row.junkyardname);
-          return rowDate && rowDate.toISOString().slice(0, 10) === targetDate; // 특정 날짜만 필터링
-        });
-        setFilteredData(filteredByDate); // 필터된 데이터만 설정
-        setIsFirstLoad(false); // 처음 로드 완료 상태로 변경
-      }
-      // showAll이 false일 때만 데이터 유지
-      else if (!showAll) {
-        setFilteredData(sortedMergedImages); // 전체 데이터를 보여주는 상황이 아니면 처음 데이터를 유지
-      }
-    };
-    socket.onerror = (error) => console.error("WebSocket error: ", error);
-    return () => socket.close();
-  };
-  
+      const sortedMergedImages = sortImages2(mergedImages);
 
-  
-
-  const handleSearch = () => {
-    setShowAll(false); // 전체 데이터를 비활성화
-    setIsFirstLoad(true); // 첫 로드처럼 데이터를 다시 불러오게 설정
-
-     // 필터 상태값을 초기화하여 검색 필터를 리셋
-  setStartDate(null); 
-  setEndDate(null); 
-  setVehicleNumber('');
-  setLocationFilter('');
-
-  // 데이터를 다시 불러오는 fetchData 호출
-  fetchData(); // 데이터 새로 불러오기
-
-  // 필터링 로직 (fetchData 이후 필터된 데이터를 표시할 때 적용)
-
-    const startDateObj = startDate ? new Date(startDate.setHours(0, 0, 0, 0)) : null;
-    const endDateObj = endDate ? new Date(endDate.setHours(23, 59, 59, 999)) : null;
-    
-    const filtered = allData.filter(row => {
-      const rowDate = parseDateFromName(row.weighbridgename || row.junkyardname);
-      const isDateInRange = (!startDateObj || !endDateObj || (rowDate >= startDateObj && rowDate <= endDateObj));
-      const isVehicleMatch = !vehicleNumber || row.fullnumber.includes(vehicleNumber);
-      const isLocationMatch = !locationFilter || row.place.includes(locationFilter);
-      return isDateInRange && isVehicleMatch && isLocationMatch;
-    });
-
-    setFilteredData(filtered);
-    setCurrentPage(1);
+      fetchDataWithIncrementalLoad(sortedMergedImages); // 데이터를 처리하는 로직
+      setLastMessageTime(Date.now()); // 마지막 처리 시간을 현재 시간으로 갱신
+    }
   };
 
-   // 전체 데이터를 보여주는 함수
-const handleShowAll = () => {
-  setFilteredData(allData); // 전체 데이터를 표시
-  setShowAll(true); // 전체 데이터 보기를 활성화
-  setIsFirstLoad(false); // 첫 로드가 아니므로 false로 설정
-  setCurrentPage(1);
-  console.log('전체', allData);
+  socket.onerror = (error) => console.error("WebSocket error: ", error);
+
+  return () => socket.close();
 };
 
+
+
+// useEffect 수정: 페이지가 처음 열릴 때 데이터 로드
+useEffect(() => {
+  fetchData();
+}, []); // 페이지가 열렸을 때만 한 번 실행
+
+
+
+
+   // 전체 데이터를 보여주는 함수
+   const handleShowAll = async () => {
+    
+   
+    setIsFetching(true); // Start fetching
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch('http://10.125.121.189:8080/admin/inout', {
+          method: 'GET',
+          headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+          }
+      });
+
+      if (!response.ok) {
+          throw new Error('데이터 가져오기 실패: ' + response.statusText);
+      }
+
+      const data = await response.json();
+      console.log("2020~2024 모든 데이터" ,data)
+      const sortedInputImages = sortImages(data.inputImages, 'weighbridgename');
+      const sortedOutputImages = sortImages(data.outputImages, 'junkyardname');
+      const mergedImages = [...sortedInputImages, ...sortedOutputImages];
+      const sortedMergedImages = sortImages2(mergedImages);
+      console.log(sortedMergedImages)
+      setAllData(sortedMergedImages);
+      setShowAll(true); // 전체 데이터 보기를 활성화
+      setCurrentPage(1);
+  } catch (error) {
+      console.error('입출차 데이터 가져오기 중 오류:', error.message);
+      alert('데이터 가져오는 중 오류가 발생했습니다: ' + error.message);
+  }finally {
+    setIsFetching(false); // Reset fetching state
+    // Reconnect WebSocket or allow messages to be received
+  }
+
+    
+  };
 
   const openModal = (row) => {
     setSelectedRow(row);
     setFormData({ recognize: row.recognize, fullnumber: row.fullnumber, place: row.place });
     setModalIsOpen(true);
-  };
+};
 
-  const closeModal = () => {
+const closeModal = () => {
     setModalIsOpen(false);
+    setFormData({ fullnumber: '', place: '' }); // 상태 초기화
+};
+
+  const openMessageModal = (fullnumber) => {
+    setMessageModalFormData({ fullnumber });
+    setMessageModalIsOpen(true);
   };
 
   const closeMessageModal = () => {
     setMessageModalIsOpen(false);
+  };
+
+  const handleSendMessage = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const formData = new FormData();
+      formData.append('content', messageContent);
+      formData.append('fullnumber', messageModalFormData.fullnumber);
+      console.log(messageContent)
+      console.log(messageModalFormData.fullnumber)
+      const response = await fetch('http://10.125.121.189:8080/admin/message', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        alert('메시지가 성공적으로 전송되었습니다.');
+        closeMessageModal();
+      } else {
+        alert('메시지 전송에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('메시지 전송 중 오류 발생:', error);
+    }
   };
 
   const openSecondModal = async (selectRow) => {
@@ -209,7 +358,7 @@ const handleShowAll = () => {
     
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch(`http://192.168.0.142:8080/admin/member?fullnumber=${selectRow.fullnumber}`, {
+      const response = await fetch(`http://10.125.121.189:8080/admin/member?fullnumber=${selectRow.fullnumber}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -240,36 +389,8 @@ const handleShowAll = () => {
     setFormData(prevState => ({ ...prevState, [name]: value }));
   };
 
-  const handleOpenMessageModal = (row) => {
-    setSelectedRow(row);
-    setMessageModalIsOpen(true); 
-  };
-  
-  const handleSendMessage = async () => {
-    try {
-      const token = localStorage.getItem('authToken');
-      const formData = new FormData();
-      formData.append('content', messageContent);
-      formData.append('fullnumber', selectedRow.fullnumber);
 
-      const response = await fetch('http://192.168.0.142:8080/admin/message', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
 
-      if (response.ok) {
-        alert('메시지가 성공적으로 전송되었습니다.');
-        closeMessageModal();
-      } else {
-        alert('메시지 전송에 실패했습니다.');
-      }
-    } catch (error) {
-      console.error('메시지 전송 중 오류 발생:', error);
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -279,9 +400,9 @@ const handleShowAll = () => {
 
       let url = '';
       if (formData.place === '계근장') {
-        url = 'http://192.168.0.142:8080/admin/inout/inputImage';
+        url = 'http://10.125.121.189:8080/admin/inout/inputImage';
       } else if (formData.place === '고철장') {
-        url = 'http://192.168.0.142:8080/admin/inout/outputImage';
+        url = 'http://10.125.121.189:8080/admin/inout/outputImage';
       } else {
         console.error('Invalid place value');
         return;
@@ -294,7 +415,7 @@ const handleShowAll = () => {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-          id: selectedRow.id, // 선택된 행의 ID
+          id: selectedRow.numberplatename  , // 선택된 행의 ID
           fullnumber: formData.fullnumber, // 폼에서 입력된 차량번호
         }).toString(),
       });
@@ -304,8 +425,19 @@ const handleShowAll = () => {
       }
 
       const updatedData = await response.json();
-      setAllData(allData.map(row => (row.id === selectedRow.id ? updatedData : row)));
+
+      const updatedDataIndex = allData.findIndex(row => row.numberplatename === selectedRow.numberplatename);
+
+    if (updatedDataIndex !== -1) {
+    const updatedDataArray = [...allData]; // Create a shallow copy of the array
+    updatedDataArray[updatedDataIndex] = updatedData; // Update the found item
+    setAllData(updatedDataArray); // Set the new array
+  } else {
+    console.error('Item not found for update');
+  }
+
       closeModal();
+      
     } catch (error) {
       console.error('Error submitting form:', error);
     }
@@ -316,6 +448,8 @@ const handleShowAll = () => {
       openModal(row);
     }
   };
+
+  
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -340,10 +474,10 @@ const handleShowAll = () => {
         endDate={endDate}
         setEndDate={setEndDate}
         handleSearch={handleSearch}
-        handleShowAll={handleShowAll}  // handleShowAll 함수 추가
+        handleShowAll={handleShowAll}
       />
 
-      <table className="timeTable-table">
+<table className="timeTable-table">
         <thead>
           <tr>
             <th>번호</th>
@@ -352,30 +486,38 @@ const handleShowAll = () => {
             <th>장소</th>
             <th>인식율</th>
             <th>계근량</th>
-            <th>주의</th>
+            <th>쪽지</th>
           </tr>
         </thead>
         <tbody>
-          {currentData.length > 0 ? (
-            currentData.map((row, index) => (
-              <TimeTableRow
-                key={index}
-                row={row}
-                index={index}
-                handleCellClick={handleCellClick}
-                handleOpenMessageModal={handleOpenMessageModal}
-                currentPage={currentPage}
-                dataPerPage={dataPerPage}
-                parseDateFromName={parseDateFromName}
-              />
-            ))
-          ) : (
-            <tr>
-              <td colSpan="7" className="table-no-data">선택된 조건에 해당하는 데이터가 없습니다.</td>
-            </tr>
-          )}
+        {currentData.length > 0 ? (
+                currentData.map((row, index) => (
+                    <tr key={index}>
+                        <td>{(currentPage - 1) * dataPerPage + index + 1}</td> {/* 페이지네이션 반영 인덱스 출력 */}
+                        <td style={{ cursor: 'pointer', color: 'blue' }} onClick={() => handleCellClick(row)}>
+                            {row.fullnumber}
+                        </td>
+                        <td>
+                            {row.weighbridgename ? parseDateFromName2(row.weighbridgename) : parseDateFromName2(row.junkyardname)}
+                        </td>
+                        <td>{row.place}</td>
+                        <td>{row.recognize}</td>
+                        <td>{row.cartype}</td>
+                        <td style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '44.8px' }} >
+                         <BiEnvelope onClick={() => openMessageModal(row.fullnumber)} />
+                       </td>
+                    </tr>
+                ))
+            ) : (
+                <tr>
+                    <td colSpan={7}>No data available</td> {/* 데이터가 없을 때 메시지 */}
+                </tr>
+            )}
+
         </tbody>
       </table>
+
+     
 
       <Pagenation 
         currentPage={currentPage} 
@@ -385,15 +527,81 @@ const handleShowAll = () => {
         setCurrentPage={setCurrentPage} 
       />
 
-      <VehicleEditModal
+     
+   {/* 모달창 */}
+      
+       
+   <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        selectedRow={selectedRow}
-        formData={formData}
-        handleChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })}
-        handleSubmit={handleSubmit}
-        openSecondModal={openSecondModal}
+        contentLabel="Edit Vehicle"
+        className="modal"
+        overlayClassName="modal-overlay"
+      >
+       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+ 
+
+  {selectedRow ? (
+    <img
+      src={`http://10.125.121.189:8080/image/${selectedRow.weighbridgename ? selectedRow.weighbridgename : selectedRow.junkyardname}`}
+      alt="참고 이미지"
+      style={{ maxWidth: '100%', maxHeight: '200px', height: 'auto', width: 'auto' }}
+    />
+  ) : (
+    <p>참고 이미지 없음</p>
+  )}
+
+  <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+    <label>
+      차량번호
+      <input
+        type="text"
+        name="fullnumber"
+        value={formData.fullnumber}
+        onChange={handleChange}
       />
+    </label>
+    <label>
+      장소
+      <input
+        type="text"
+        name="place"
+        value={formData.place}
+        onChange={handleChange}
+      />
+    </label>
+
+    <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+      <button type="submit">수정</button>
+      <button type="button" onClick={closeModal}>취소</button>
+      <button type="button" onClick={() => openSecondModal(selectedRow)}>추가 정보 보기</button>
+    </div>
+  </form>
+</div>
+
+      </Modal>
+    
+
+      <Modal
+          isOpen={secondModalIsOpen}
+          onRequestClose={closeSecondModal}
+          contentLabel="Additional Information"
+          className="modal"
+          overlayClassName="modal-overlay"
+        >
+           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+              <h2 style={{ marginBottom: '10px' }}>추가 정보(유사번호 리스트)</h2>
+              
+              {members.map((member, index) => (
+                <p key={index} style={{ margin: '0' }}>{member}</p>
+              ))}
+
+              <div style={{ display: 'flex', gap: '10px', marginTop: '10px', justifyContent: 'center' }}>
+                <button type="button" onClick={closeSecondModal}>닫기</button>
+              </div>
+            </div>
+      </Modal>
+
 
       <MessageModal
         isOpen={messageModalIsOpen}
@@ -403,20 +611,9 @@ const handleShowAll = () => {
         handleSendMessage={handleSendMessage}
       />
 
-      <Modal
-        isOpen={secondModalIsOpen}
-        onRequestClose={closeSecondModal}
-        contentLabel="Additional Information"
-        className="modal"
-        overlayClassName="modal-overlay"
-      >
-        <h2>추가 정보(유사번호 리스트)</h2>
-        <p>{members.map((member, i) => <span key={i}>{member.name} </span>)}</p>
-        <button type="button" onClick={closeSecondModal}>닫기</button>
-      </Modal>
+
     </div>
   );
 };
 
 export default TimeTable;
-

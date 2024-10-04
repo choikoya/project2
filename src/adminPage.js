@@ -21,7 +21,7 @@ const AdminPage = () => {
       const userRole = localStorage.getItem('userRole');
       setRole(userRole);
 
-      const response = await fetch('http://192.168.0.142:8080/admin/members', {
+      const response = await fetch('http://10.125.121.189:8080/admin/members', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -79,7 +79,7 @@ const AdminPage = () => {
 
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch(`http://192.168.0.142:8080/admin/members/register?username=${id}`, {
+      const response = await fetch(`http://10.125.121.189:8080/admin/members/register?username=${id}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

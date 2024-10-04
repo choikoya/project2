@@ -21,7 +21,7 @@ function LoginPage() {
 
   const handleSignup = async (signupUsername, signupPassword) => {
     try {
-      const response = await fetch('http://192.168.0.142:8080/login/signup', {
+      const response = await fetch('http://10.125.121.189:8080/login/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,7 +80,7 @@ function LoginPage() {
 
     try {
       // 백엔드 API로 로그인 요청 보내기
-      const response = await fetch('http://192.168.0.142:8080/login', {
+      const response = await fetch('http://10.125.121.189:8080/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ function LoginPage() {
   // 서버에 새쪽지 있는지 확인하는 함수
   const checkForNewMessages = async (token) => {
     try {
-      const response = await fetch('http://192.168.0.142:8080/api/messages/new', {
+      const response = await fetch('http://10.125.121.189:8080/api/messages/new', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,

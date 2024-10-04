@@ -13,7 +13,7 @@ const VehicleEditModal = ({ isOpen, onRequestClose, selectedRow, formData, handl
     <h2>차량 정보 수정</h2>
     {selectedRow ? (
       <img
-        src={`http://192.168.0.142:8080/image/${selectedRow.name}`} 
+        src={`http://10.125.121.189:8080/image/${selectedRow.name}`} 
         alt="참고 이미지"
         style={{ maxWidth: '100%', height: 'auto' }}
       />

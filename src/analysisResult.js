@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import './css/analysisResult.css';
 import { useNavigate } from 'react-router-dom';
+import { be } from 'date-fns/locale';
 
 function AnalysisResult() {
   const [inputImages, setInputImages] = useState([]);
   const [outputImages, setOutputImages] = useState([]);
   const [leftImage, setLeftImage] = useState(null);
   const [rightImage, setRightImage] = useState(null);
-  const [fullnumber, setFullnumber] = useState(null);
+  const [inFullnumber, setInFullnumber] = useState(null);
+  const [outFullnumber, setOutFullnumber] = useState(null);
   const [weighbridgename, setWeighbridgename] = useState(null);
+  const [beforeWeighbridgename, setBeforeWeighbridgename] = useState(null);
   const [junkyardname, setJunkyardname] = useState(null);
   const navigate = useNavigate();
   const [firstMessageTime, setFirstMessageTime] = useState(null);
@@ -26,7 +29,7 @@ function AnalysisResult() {
       navigate('/notice');
     }
 
-    const socket = new WebSocket(`ws://192.168.0.142:8080/ws`);
+    const socket = new WebSocket(`ws://10.125.121.189:8080/ws`);
 
     socket.onmessage = async (event) => {
       const data = JSON.parse(event.data);
@@ -62,16 +65,30 @@ function AnalysisResult() {
 
   const analyzeImages = async (inputImages, outputImages) => {
     setLeftImage(inputImages[0]?.weighbridgename);
+    setInFullnumber(inputImages[0]?.fullnumber);
+    const filename1 = inputImages[0]?.weighbridgename;
+    if (filename1) {
+      setWeighbridgename(filename1.substring(0, filename1.length - 4));
+    }
     await new Promise(resolve => setTimeout(resolve, 5000));
 
     for (let i = 1; i < inputImages.length; i++) {
       setLeftImage(inputImages[i]?.weighbridgename); // 왼쪽 이미지 설정
       setRightImage(outputImages[i - 1]?.junkyardname); // 오른쪽 이미지 설정
-      if (outputImages[i - 1]?.fullnumber === inputImages[i - 1]?.fullnumber) {
-        setFullnumber(outputImages[i - 1]?.fullnumber);
-        const filename1 = inputImages[i - 1]?.weighbridgename; // "2024-09-24_12-45-45.jpg"
-        const filename2 = outputImages[i - 1]?.junkyardname; // "2024-09-24_12-45-45.jpg"
+      setOutFullnumber(outputImages[i - 1]?.fullnumber);
+      setInFullnumber(inputImages[i]?.fullnumber);
+      const filename1 = inputImages[i]?.weighbridgename; // "2024-09-24_12-45-45.jpg"
+      const filename3 = inputImages[i - 1]?.weighbridgename; // "2024-09-24_12-45-45.jpg"
+      const filename2 = outputImages[i - 1]?.junkyardname; // "2024-09-24_12-45-45.jpg"
+      if (filename3) {
+        setBeforeWeighbridgename(filename3.substring(0, filename3.length - 4));
+      }
+    
+      if (filename1) {
         setWeighbridgename(filename1.substring(0, filename1.length - 4));
+      }
+    
+      if (filename2) {
         setJunkyardname(filename2.substring(0, filename2.length - 4));
       }
 
@@ -88,7 +105,7 @@ function AnalysisResult() {
         <div className="image-box">
           {leftImage ? (
             <img 
-              src={`http://192.168.0.142:8080/image/${leftImage}`} 
+              src={`http://10.125.121.189:8080/image/${leftImage}`} 
               alt="Left Image" 
             />
           ) : (
@@ -98,7 +115,7 @@ function AnalysisResult() {
         <div className="image-box">
           {rightImage ? (
             <img 
-              src={`http://192.168.0.142:8080/image/${rightImage}`} 
+              src={`http://10.125.121.189:8080/image/${rightImage}`} 
               alt="Right Image" 
             />
           ) : (
@@ -106,12 +123,20 @@ function AnalysisResult() {
           )}
         </div>
       </div>
-      <div className={`result-box`}> 
-        <p className="result-text">
-          차량번호 ({fullnumber})<br />
-          계근장 입차완료 ({weighbridgename})<br />
-          고철장 입차완료 ({junkyardname})
-        </p>
+      <div className='flex justify-between gap-3'>
+        <div className={`result-left-box`}> 
+          <p className="result-text">
+            차량번호 ({inFullnumber})<br />
+            계근장 입차완료 ({weighbridgename})<br />
+          </p>
+        </div>
+        <div className={`result-right-box`}> 
+          <p className="result-text">
+            차량번호 ({outFullnumber})<br />
+            계근장 입차시간 ({beforeWeighbridgename})<br />
+            고철장 입차완료 ({junkyardname})
+          </p>
+        </div>
       </div>
     </div>
   );

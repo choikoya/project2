@@ -2,10 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import SearchControl from './searchControl';
-import TimeTableRow from './timeTableRow';
-import VehicleEditModal from './vehicleEditModal';
-import MessageModal from './messageModal';
+import SearchControl from '../timetable/searchControl';
+import TimeTableRow from '../timetable/timeTableRow';
+import VehicleEditModal from '../timetable/vehicleEditModal';
+import MessageModal from '../timetable/messageModal';
 import Pagenation from '../pagenation';
 import '../css/timeTable.css';
 import Modal from 'react-modal'; // Import react-modal
@@ -48,6 +48,8 @@ const sortImages = (images, key) => {
     return dateA - dateB;
   });
 };
+
+
 
 // 파일 이름에서 날짜와 시간을 추출하는 함수
 function extractDateFromName(name) {

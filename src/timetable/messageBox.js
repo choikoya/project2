@@ -10,7 +10,7 @@ function Message({ hideControls = false }) {
       const token = localStorage.getItem('authToken'); // 로컬 스토리지에서 인증 토큰 가져오기
 
       // 백엔드로 GET 요청 보내기 (인증 토큰 포함)
-      const response = await fetch('http://192.168.0.142:8080/member/message', {
+      const response = await fetch('http://10.125.121.189:8080/member/message', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`, // 인증 토큰 포함

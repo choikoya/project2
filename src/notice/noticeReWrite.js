@@ -14,7 +14,7 @@ function NoticeReWrite() {
     const fetchNoticeDetail = async () => {
       try {
         const token = localStorage.getItem('authToken'); // Get auth token
-        const response = await fetch(`http://192.168.0.142:8080/member/community/${id}`, {
+        const response = await fetch(`http://10.125.121.189:8080/member/community/${id}`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`, // Include auth token
@@ -70,7 +70,7 @@ function NoticeReWrite() {
       const token = localStorage.getItem('authToken'); // Get auth token
 
       // Send PUT request to update the notice
-      const response = await fetch(`http://192.168.0.142:8080/member/community/${id}`, {
+      const response = await fetch(`http://10.125.121.189:8080/member/community/${id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`, // Include auth token

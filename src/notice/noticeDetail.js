@@ -27,7 +27,7 @@ function NoticeDetail() {
   const fetchNoticeDetail = async () => {
   try {
       console.log("Fetching notice detail...");
-      const response = await fetch(`http://192.168.0.142:8080/member/community/${id}`, {
+      const response = await fetch(`http://10.125.121.189:8080/member/community/${id}`, {
           method: 'GET',
           headers: {
               Authorization: `Bearer ${token}`,
@@ -52,7 +52,7 @@ function NoticeDetail() {
 
 const fetchNoticeDetailReply = async () => {
   try {
-    const response = await fetch(`http://192.168.0.142:8080/member/reply/${id}`, {
+    const response = await fetch(`http://10.125.121.189:8080/member/reply/${id}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`, // Corrected template literal syntax
@@ -92,7 +92,7 @@ const fetchNoticeDetailReply = async () => {
       try {
       // 삭제 로직 구현
      
-      const response = await fetch(`http://localhost:8080/member/community/${id}`, {
+      const response = await fetch(`http://10.125.121.189:8080/member/community/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`, // 토큰을 헤더에 포함
@@ -140,7 +140,7 @@ const handleReply=   () =>{
       fileNames.map((fileName, index) => (
         <a
           key={index} // Use index as key; consider a better unique identifier if available
-          href={`http://localhost:8080/image/${fileName.trim()}`} // Use trimmed file names
+          href={`http://10.125.121.189:8080/image/${fileName.trim()}`} // Use trimmed file names
           target="_blank"
           rel="noopener noreferrer"
           style={{ textDecoration: 'none', color: '#007bff', display: 'block' }} // Change display to block for better readability

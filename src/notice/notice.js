@@ -12,7 +12,7 @@ function Notice({ hideControls = false }) {
   const fetchNotices = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch('http://192.168.0.142:8080/member/community', {
+      const response = await fetch('http://10.125.121.189:8080/member/community', {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -50,7 +50,7 @@ function Notice({ hideControls = false }) {
     console.log("Search term:", term);
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch(`http://192.168.0.142:8080/member/community/search?fullnumber=${term}`, {
+      const response = await fetch(`http://10.125.121.189:8080/member/community/search?fullnumber=${term}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,

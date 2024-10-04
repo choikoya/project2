@@ -11,7 +11,7 @@ import '../css/timeTable.css';
 import Modal from 'react-modal'; // Import react-modal
 import { BiEnvelope } from "react-icons/bi";
 
-const WS_URL = 'ws://192.168.0.142:8080/ws';
+const WS_URL = 'ws://10.125.121.189:8080/ws';
 Modal.setAppElement('#root'); // Adjust if your root element has a different ID
 
 // 날짜를 파일 이름에서 추출하여 변환하는 함수
@@ -75,9 +75,8 @@ const sortImages2 = (images, key) => {
 
 const TimeTable = () => {
 
-  const [processedDataIds, setProcessedDataIds] = useState(new Set()); // 이미 처리된 데이터의 ID를 저장할 Set
-  const [lastMessageTime, setLastMessageTime] = useState(null); // 마지막 메시지를 받은 시간
-
+  
+  
   const [startDate, setStartDate] = useState(null);
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [endDate, setEndDate] = useState(null);
@@ -106,15 +105,14 @@ const TimeTable = () => {
 
   const [todayData, setTodayData ] =useState(false);  //하나씩 슬라이싱을 하기 위한 
 
-  const indexRef = useRef(0); // 컴포넌트 최상단에 선언
 
-// 기존 데이터 설정하지 않고 한줄씩 추가하는 로직에서 데이터만 추가하는 식으로 수정
+
 const handleUserFetch = async () => {
     try {
         const role =localStorage.getItem('userRole');
         let url;
-        if (role ==="ROLE_MEMBER") {url = 'http://192.168.0.142:8080/member/inout'} 
-        else if (role ==="ROLE_ADMIN")    {url = 'http://192.168.0.142:8080/admin/today_inout' ; setTodayData(true);} 
+        if (role ==="ROLE_MEMBER") {url = 'http://10.125.121.189:8080/member/inout'} 
+        else if (role ==="ROLE_ADMIN")    {url = 'http://10.125.121.189:8080/admin/today_inout' ; setTodayData(true);} 
         const token = localStorage.getItem('authToken');
 
         const response = await fetch(url, {
@@ -135,8 +133,8 @@ const handleUserFetch = async () => {
         const mergedImages = [...sortedInputImages, ...sortedOutputImages];
         const sortedMergedImages = sortImages2(mergedImages);
         console.log(sortedMergedImages)
-         // 한 줄씩 데이터를 추가
-    fetchDataWithIncrementalLoad(sortedMergedImages); // 한 줄씩 출력
+        setAllData(sortedMergedImages);
+
     } catch (error) {
         console.error('입출차 데이터 가져오기 중 오류:', error.message);
         alert('데이터 가져오는 중 오류가 발생했습니다: ' + error.message);
@@ -187,81 +185,6 @@ const handleSearch = () => {
 
 
 
-// 데이터를 한 줄씩 추가하는 로직 (한 번에 모든 데이터가 출력되지 않도록)
-// 데이터를 한 줄씩 추가하는 로직 (중복 체크를 강화)
-// 한 줄씩 데이터를 추가하는 로직 (중복 체크를 강화)
-const fetchDataWithIncrementalLoad = (sortedMergedImages) => {
-  const interval = 5000; // 5초로 설정
-
-  const intervalId = setInterval(() => {
-    const index = indexRef.current; // useRef로 인덱스 값 참조
-
-    if (index < sortedMergedImages.length) {
-      const newImage = sortedMergedImages[index];
-
-      // 고유한 식별자를 지정 (번호판 이름이나 ID 등)
-      const imageId = newImage.id || newImage.numberplatename || newImage.weighbridgename || newImage.junkyardname;
-
-      // 중복된 데이터인지 확인 (Set에 고유한 식별자 저장)
-      if (!processedDataIds.has(imageId)) {
-        setFilteredData((prevData) => {
-          const updatedData = [...prevData, newImage]
-            .filter((item, pos, self) => self.findIndex(v => v.id === item.id) === pos) // 중복 제거
-            .sort((a, b) => parseDateFromName(a.weighbridgename) - parseDateFromName(b.weighbridgename));
-          return updatedData;
-        });
-        setProcessedDataIds((prevIds) => new Set(prevIds).add(imageId)); // 처리된 데이터 기록
-      } else {
-        console.log(`중복된 데이터 건너뜀: ${imageId}`);
-      }
-
-      indexRef.current += 1; // 다음 데이터를 처리할 때 인덱스 증가
-    } else {
-      clearInterval(intervalId); // 모든 데이터를 처리한 경우 인터벌 중지
-    }
-  }, interval); // interval 값에 따라 실행
-};
-
-
-
-
-let lastReceivedData = null; // 마지막으로 받은 데이터를 저장할 변수
-
-
-// 데이터를 가져오는 함수 수정
-// 데이터를 가져오는 함수 수정
-const fetchData = async () => {
-  const socket = new WebSocket(WS_URL);
-
-  // 데이터를 가져오는 함수에서 마지막 처리 시간을 체크하여, 1시간 반 간격으로만 데이터를 처리
-  socket.onmessage = (event) => {
-    if (!lastMessageTime || (Date.now() - lastMessageTime >= 5400000)) { // 1시간 반 = 5400000ms
-      const data = JSON.parse(event.data);
-
-      const sortedInputImages = sortImages(data.inputImages, 'weighbridgename');
-      const sortedOutputImages = sortImages(data.outputImages, 'junkyardname');
-      const mergedImages = [...sortedInputImages, ...sortedOutputImages];
-      const sortedMergedImages = sortImages2(mergedImages);
-
-      fetchDataWithIncrementalLoad(sortedMergedImages); // 데이터를 처리하는 로직
-      setLastMessageTime(Date.now()); // 마지막 처리 시간을 현재 시간으로 갱신
-    }
-  };
-
-  socket.onerror = (error) => console.error("WebSocket error: ", error);
-
-  return () => socket.close();
-};
-
-
-
-// useEffect 수정: 페이지가 처음 열릴 때 데이터 로드
-useEffect(() => {
-  fetchData();
-}, []); // 페이지가 열렸을 때만 한 번 실행
-
-
-
 
    // 전체 데이터를 보여주는 함수
    const handleShowAll = async () => {
@@ -270,7 +193,7 @@ useEffect(() => {
     setIsFetching(true); // Start fetching
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch('http://192.168.0.142:8080/admin/inout', {
+      const response = await fetch('http://10.125.121.189:8080/admin/inout', {
           method: 'GET',
           headers: {
               Authorization: `Bearer ${token}`,
@@ -289,7 +212,9 @@ useEffect(() => {
       const mergedImages = [...sortedInputImages, ...sortedOutputImages];
       const sortedMergedImages = sortImages2(mergedImages);
       console.log(sortedMergedImages)
-      setAllData(sortedMergedImages);
+      const validImages = sortedMergedImages.slice(100); //인덱스 100부터 끝까지 잘라냄
+
+      setAllData(validImages);
       setShowAll(true); // 전체 데이터 보기를 활성화
       setCurrentPage(1);
   } catch (error) {
@@ -331,7 +256,7 @@ const closeModal = () => {
       formData.append('fullnumber', messageModalFormData.fullnumber);
       console.log(messageContent)
       console.log(messageModalFormData.fullnumber)
-      const response = await fetch('http://192.168.0.142:8080/admin/message', {
+      const response = await fetch('http://10.125.121.189:8080/admin/message', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -358,7 +283,7 @@ const closeModal = () => {
     
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch(`http://192.168.0.142:8080/admin/member?fullnumber=${selectRow.fullnumber}`, {
+      const response = await fetch(`http://10.125.121.189:8080/admin/member?fullnumber=${selectRow.fullnumber}`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -400,9 +325,9 @@ const closeModal = () => {
 
       let url = '';
       if (formData.place === '계근장') {
-        url = 'http://192.168.0.142:8080/admin/inout/inputImage';
+        url = 'http://10.125.121.189:8080/admin/inout/inputImage';
       } else if (formData.place === '고철장') {
-        url = 'http://192.168.0.142:8080/admin/inout/outputImage';
+        url = 'http://10.125.121.189:8080/admin/inout/outputImage';
       } else {
         console.error('Invalid place value');
         return;
@@ -543,7 +468,7 @@ const closeModal = () => {
 
   {selectedRow ? (
     <img
-      src={`http://localhost:8080/image/${selectedRow.weighbridgename ? selectedRow.weighbridgename : selectedRow.junkyardname}`}
+      src={`http://10.125.121.189:8080/image/${selectedRow.weighbridgename ? selectedRow.weighbridgename : selectedRow.junkyardname}`}
       alt="참고 이미지"
       style={{ maxWidth: '100%', maxHeight: '200px', height: 'auto', width: 'auto' }}
     />

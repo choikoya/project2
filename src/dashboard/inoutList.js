@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../css/inoutList.css';
 
-const WS_URL = 'ws://192.168.0.142:8080/ws';
+const WS_URL = 'ws://10.125.121.189:8080/ws';
 
 const InoutList = () => {
   const [data, setData] = useState([]);
@@ -21,7 +21,7 @@ const InoutList = () => {
 
     const fetchPhoneNumber = async (fullnumber) => {
       try {
-        const response = await fetch(`http://192.168.0.142:8080/admin/phoneNumber?fullnumber=${fullnumber}`, {
+        const response = await fetch(`http://10.125.121.189:8080/admin/phoneNumber?fullnumber=${fullnumber}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,

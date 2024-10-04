@@ -39,7 +39,7 @@ function NoticeWrite() {
       const token = localStorage.getItem('authToken'); // 인증 토큰 가져오기
 
       // 백엔드로 POST 요청 전송
-      const response = await fetch('http://192.168.0.142:8080/member/community', {
+      const response = await fetch('http://10.125.121.189:8080/member/community', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`, // 인증 토큰을 포함
